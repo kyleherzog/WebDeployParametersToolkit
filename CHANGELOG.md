@@ -21,3 +21,10 @@ on the official Visual Studio extension gallery.
 - [x] Generate SetParameters.xml files from web.config
 - [x] Import missing parameters into SetParameters.xml file
 - [x] Nest SetParameters.xml files under Parameters.xml file 
+
+## 1.1
+
+**2016-09-02**
+
+- [x] Fix for *setParameters* element being wrongly named *parameters* instead when generating SetParameters.xml files.
+

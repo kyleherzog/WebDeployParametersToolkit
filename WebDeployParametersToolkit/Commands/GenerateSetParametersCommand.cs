@@ -151,7 +151,7 @@ namespace WebDeployParametersToolkit
                 writer.WriteStartElement("parameters");
                 foreach (var parameter in parameters)
                 {
-                    writer.WriteStartElement("parameter");
+                    writer.WriteStartElement("setParameter");
                     writer.WriteAttributeString("name", parameter.Key);
                     writer.WriteAttributeString("value", parameter.Value);
                     writer.WriteEndElement();
