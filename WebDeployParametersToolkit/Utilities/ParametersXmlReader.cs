@@ -55,19 +55,21 @@ namespace WebDeployParametersToolkit.Utilities
             document.Load(Path.Combine(folder, "web.config"));
 
             var connectionStringsNode = document.SelectSingleNode("/configuration/connectionStrings");
-            var nav = connectionStringsNode.CreateNavigator();
-
-            if (nav.MoveToFirstChild())
+            if (connectionStringsNode != null)
             {
-                do
-                {
-                    if (nav.Name == "add")
-                    {
-                        results.Add($"{nav.GetAttribute("name", string.Empty)}-Web.config Connection String", nav.GetAttribute("connectionString", string.Empty));
-                    }
-                } while (nav.MoveToNext());
-            }
+                var nav = connectionStringsNode.CreateNavigator();
 
+                if (nav.MoveToFirstChild())
+                {
+                    do
+                    {
+                        if (nav.Name == "add")
+                        {
+                            results.Add($"{nav.GetAttribute("name", string.Empty)}-Web.config Connection String", nav.GetAttribute("connectionString", string.Empty));
+                        }
+                    } while (nav.MoveToNext());
+                }
+            }
             return results;
         }
     }

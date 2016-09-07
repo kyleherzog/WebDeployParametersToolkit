@@ -79,6 +79,7 @@ namespace WebDeployParametersToolkit
             Nester.Initialize(DteInstance);
             ApplyMissingParametersCommand.Initialize(this);
             GenerateParametersCommand.Initialize(this);
+            KeepSetParametersOutOfPackageCommand.Initialize(this);
             
 
         }

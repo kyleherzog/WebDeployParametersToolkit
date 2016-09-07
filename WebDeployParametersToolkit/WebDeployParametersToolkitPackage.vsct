@@ -88,6 +88,13 @@
           <ButtonText>Generate Parameters.xml</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidWebDeployParametersToolkitPackageCmdSet" id="cmdidKeepSetParametersOutOfPackageCommand" priority="0x0100" type="Button">
+        <Parent guid="guidWebDeployParametersToolkitPackageCmdSet" id="MyMenuGroup" />
+        <Icon guid="guidImages4" id="bmpPic1" />
+        <Strings>
+          <ButtonText>Keep Child Files out of Package</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
@@ -101,6 +108,7 @@
       <Bitmap guid="guidImages1" href="Resources\NestCommand.png" usedList="bmpPic1" />
       <Bitmap guid="guidImages2" href="Resources\ApplyMissingParametersCommand.png" usedList="bmpPic1" />
       <Bitmap guid="guidImages3" href="Resources\GenerateParametersCommand.png" usedList="bmpPic1" />
+      <Bitmap guid="guidImages4" href="Resources\KeepSetParametersOutOfPackageCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
   </Commands>
 
@@ -115,6 +123,7 @@
       <IDSymbol value="257" name="cmdidNestCommand" />
       <IDSymbol value="258" name="cmdidApplyMissingParametersCommand" />
       <IDSymbol value="259" name="cmdidGenerateParametersCommand" />
+      <IDSymbol value="260" name="cmdidKeepSetParametersOutOfPackageCommand" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{dc8edac2-f399-4700-bc21-e3638ee03a01}">
@@ -131,6 +140,16 @@
 
     <GuidSymbol value="{d5fc3208-e5eb-4e38-ad72-ee698a0671dc}" name="guidImages3">
       <IDSymbol name="bmpPic1" value="1" />
+    </GuidSymbol>
+  
+  
+    <GuidSymbol value="{68935675-4251-40b1-becc-ace4b2730f2b}" name="guidImages4">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

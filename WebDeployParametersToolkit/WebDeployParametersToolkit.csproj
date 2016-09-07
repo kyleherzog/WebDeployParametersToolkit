@@ -59,6 +59,7 @@
       <DependentUpon>FileNameDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Commands\GenerateParametersCommand.cs" />
+    <Compile Include="KeepSetParametersOutOfPackageCommand.cs" />
     <Compile Include="WebDeployParametersToolkitPackage.cs" />
     <Compile Include="Commands\NestCommand.cs" />
     <Compile Include="Nester.cs" />
@@ -86,6 +87,7 @@
     <Content Include="Resources\ApplyMissingParametersCommand.png" />
     <Content Include="Resources\GenerateParametersCommand.png" />
     <Content Include="Resources\GenerateSetParametersCommand.png" />
+    <Content Include="Resources\KeepSetParametersOutOfPackageCommand.png" />
     <Content Include="Resources\PackageIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
