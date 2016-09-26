@@ -144,7 +144,8 @@ namespace WebDeployParametersToolkit
                 var parameters = ParseParameters(sourceName);
                 CreateSetXml(parameters, targetName);
                 var parent = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(sourceName);
-                parent.ProjectItems.AddFromFile(targetName);
+                var item = parent.ProjectItems.AddFromFile(targetName);
+                item.Properties.Item("ItemType").Value = "Parameterization";
             }
         }
 

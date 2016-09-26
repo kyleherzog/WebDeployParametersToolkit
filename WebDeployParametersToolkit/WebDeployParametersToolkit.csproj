@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AddParameterizationTargetCommand.cs" />
+    <Compile Include="Commands\AddParameterizationTargetCommand.cs" />
     <Compile Include="Commands\ApplyMissingParametersCommand.cs" />
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Extensions\SolutionExplorerExtensions.cs" />

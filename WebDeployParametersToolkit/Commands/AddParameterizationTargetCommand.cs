@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using WebDeployParametersToolkit.Extensions;
 using System.IO;
+using EnvDTE;
 
 namespace WebDeployParametersToolkit
 {
@@ -129,6 +130,15 @@ namespace WebDeployParametersToolkit
                 var projectFullName = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
                 var project = new ParameterizationProject(projectFullName);
                 project.Initialize();
+
+                var parent = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(filePath);
+
+                foreach (var item in parent.ProjectItems)
+                {
+                    var child = item as ProjectItem;
+                    if (child != null)
+                        child.Properties.Item("ItemType").Value = "Parameterization";
+                }
             }
         }
     }
