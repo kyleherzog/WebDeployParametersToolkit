@@ -1,6 +1,5 @@
 # Roadmap
 
-- [ ] Set project to copy SetParameters.xml files to drop location during build
 - [ ] SetParameters.xml intellisense
 
 Features that have a checkmark are complete and available for
@@ -28,3 +27,12 @@ on the official Visual Studio extension gallery.
 
 - [x] Fix for *setParameters* element being wrongly named *parameters* instead when generating SetParameters.xml files.
 
+## 1.2
+**2016-09-07**
+
+- [x] Handling missing connectionStrings node in web.config file.
+
+## 1.3
+**2016-9-26**
+
+- [x] Configure project to copy SetParameters.xml files to drop location during build

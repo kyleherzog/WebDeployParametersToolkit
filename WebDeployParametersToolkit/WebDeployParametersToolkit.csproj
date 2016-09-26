@@ -51,6 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AddParameterizationTargetCommand.cs" />
     <Compile Include="Commands\ApplyMissingParametersCommand.cs" />
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Extensions\SolutionExplorerExtensions.cs" />
@@ -59,7 +60,7 @@
       <DependentUpon>FileNameDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Commands\GenerateParametersCommand.cs" />
-    <Compile Include="KeepSetParametersOutOfPackageCommand.cs" />
+    <Compile Include="ParameterizationProject.cs" />
     <Compile Include="WebDeployParametersToolkitPackage.cs" />
     <Compile Include="Commands\NestCommand.cs" />
     <Compile Include="Nester.cs" />
@@ -84,10 +85,10 @@
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
     </VSCTCompile>
+    <Content Include="Resources\AddParameterizationTargetCommand.png" />
     <Content Include="Resources\ApplyMissingParametersCommand.png" />
     <Content Include="Resources\GenerateParametersCommand.png" />
     <Content Include="Resources\GenerateSetParametersCommand.png" />
-    <Content Include="Resources\KeepSetParametersOutOfPackageCommand.png" />
     <Content Include="Resources\PackageIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -112,6 +113,7 @@
     <Reference Include="EnvDTE90, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Microsoft.Build, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.CommandBars, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">

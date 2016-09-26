@@ -56,6 +56,12 @@ To nest a SetParameters*.xml file that was created prior to installing this exte
 
 Then select *Nest Under Parameters.xml* to have the selected file nested under Parameters.xml.
 
+### Parameterization Build Action Support
+When generating or nesting SetParameters*.xml files, the build action on those files will be set to *Parameterization*.
+
+This setting will result in these files being copied to the package location and excluded from the package itself.
+
+
 ## Contribute
 For cloning and building this project yourself, make sure
 to install the

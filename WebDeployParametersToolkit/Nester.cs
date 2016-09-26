@@ -22,12 +22,33 @@ namespace WebDeployParametersToolkit
 
         private static void ItemRenamed(ProjectItem item, string oldName)
         {
-            ApplyNesting(item);
+
+            ItemAddedRenamed(item);
         }
 
         private static void ItemAdded(ProjectItem item)
         {
-            ApplyNesting(item);
+            ItemAddedRenamed(item);
+        }
+
+        private static void ItemAddedRenamed(ProjectItem item)
+        {
+            //TODO fix: this causes VS to throw a 'System.AccessViolationException' if it needs to initialize the project.
+            //          Just commenting feature out for now.
+
+            //if (item.ContainingProject != null)
+            //{
+            //    if (item.Properties != null && item.FileCount > 0)
+            //    {
+            //        var itemFileName = item.FileNames[0];
+            //        var parameterizationProject = new ParameterizationProject(item.ContainingProject.FullName);
+            //        if (parameterizationProject.Initialize())
+            //        {
+            //            //don't try to use the ProjectItem object.  It will fail if Initialization was done. Use the file 
+            //            ApplyNesting(itemFileName);
+            //        }
+            //    }
+            //}
         }
 
         public static void ApplyNesting(string itemPath)

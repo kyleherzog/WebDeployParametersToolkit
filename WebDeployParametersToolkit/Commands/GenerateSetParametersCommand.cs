@@ -129,16 +129,23 @@ namespace WebDeployParametersToolkit
             var sourceName = SolutionExplorerExtensions.SelectedItemPath;
             var folder = Path.GetDirectoryName(sourceName);
             var targetName = Path.Combine(folder, fileName);
+
             if (File.Exists(targetName))
             {
                 ShowMessage("Duplicate File", "The file name specified already exits.");
                 return;
             }
 
-            var parameters = ParseParameters(sourceName);
-            CreateSetXml(parameters, targetName);
-            var parent = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(sourceName);
-            parent.ProjectItems.AddFromFile(targetName);
+            var projectFullName = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(sourceName).ContainingProject.FullName;
+
+            var parameterizationProject = new ParameterizationProject(projectFullName);
+            if (parameterizationProject.Initialize())
+            {
+                var parameters = ParseParameters(sourceName);
+                CreateSetXml(parameters, targetName);
+                var parent = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(sourceName);
+                parent.ProjectItems.AddFromFile(targetName);
+            }
         }
 
         private void CreateSetXml(IDictionary<string, string> parameters, string fileName)

@@ -88,11 +88,13 @@
           <ButtonText>Generate Parameters.xml</ButtonText>
         </Strings>
       </Button>
-      <Button guid="guidWebDeployParametersToolkitPackageCmdSet" id="cmdidKeepSetParametersOutOfPackageCommand" priority="0x0100" type="Button">
+      <Button guid="guidWebDeployParametersToolkitPackageCmdSet" id="cmdidAddParameterizationTargetCommand" priority="0x0100" type="Button">
         <Parent guid="guidWebDeployParametersToolkitPackageCmdSet" id="MyMenuGroup" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
         <Icon guid="guidImages4" id="bmpPic1" />
         <Strings>
-          <ButtonText>Keep Child Files out of Package</ButtonText>
+          <ButtonText>Add Parameterization Build Target</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -108,7 +110,7 @@
       <Bitmap guid="guidImages1" href="Resources\NestCommand.png" usedList="bmpPic1" />
       <Bitmap guid="guidImages2" href="Resources\ApplyMissingParametersCommand.png" usedList="bmpPic1" />
       <Bitmap guid="guidImages3" href="Resources\GenerateParametersCommand.png" usedList="bmpPic1" />
-      <Bitmap guid="guidImages4" href="Resources\KeepSetParametersOutOfPackageCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages4" href="Resources\AddParameterizationTargetCommand.png" usedList="bmpPic1" />
     </Bitmaps>
   </Commands>
 
@@ -123,7 +125,7 @@
       <IDSymbol value="257" name="cmdidNestCommand" />
       <IDSymbol value="258" name="cmdidApplyMissingParametersCommand" />
       <IDSymbol value="259" name="cmdidGenerateParametersCommand" />
-      <IDSymbol value="260" name="cmdidKeepSetParametersOutOfPackageCommand" />
+      <IDSymbol value="260" name="cmdidAddParameterizationTargetCommand" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{dc8edac2-f399-4700-bc21-e3638ee03a01}">
@@ -142,14 +144,8 @@
       <IDSymbol name="bmpPic1" value="1" />
     </GuidSymbol>
   
-  
-    <GuidSymbol value="{68935675-4251-40b1-becc-ace4b2730f2b}" name="guidImages4">
+    <GuidSymbol value="{556b0e9f-c7c7-402a-a6e4-5a423bf87c5a}" name="guidImages4">
       <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

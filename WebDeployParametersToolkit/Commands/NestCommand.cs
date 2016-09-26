@@ -5,7 +5,9 @@
 //------------------------------------------------------------------------------
 
 using EnvDTE;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.ComponentModel.Design;
 using System.IO;
@@ -84,9 +86,9 @@ namespace WebDeployParametersToolkit
 
             var setParametersItem = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(itemPath);
 
-            var currentParent = setParametersItem.Collection?.Parent as ProjectItem;
+            var currentParent = setParametersItem?.Collection?.Parent as ProjectItem;
 
-            return (fileName.StartsWith("setparameters") && extension == ".xml" && parametersItem != null && (currentParent == null || currentParent.Name != parametersItem.Name));
+            return (fileName.StartsWith("setparameters") && extension == ".xml" && parametersItem != null && setParametersItem != null && (currentParent == null || currentParent.Name != parametersItem.Name));
         }
 
         /// <summary>
@@ -128,19 +130,32 @@ namespace WebDeployParametersToolkit
         private void MenuItemCallback(object sender, EventArgs e)
         {
             var dte = WebDeployParametersToolkitPackage.DteInstance;
-
+                       
             //save node name details to maintain selection in solution explorer
             var selectedItem = ((Array)dte.ToolWindows.SolutionExplorer.SelectedItems).Cast<UIHierarchyItem>().First();
+            
             var selectedParent = selectedItem.Collection.Parent as UIHierarchyItem;
             var parentNodeName = selectedParent.NodeName();
             var nodeName = selectedItem.Name;
-
             var itemPath = SolutionExplorerExtensions.SelectedItemPath;
-            Nester.ApplyNesting(itemPath);
 
-            System.Threading.Thread.Sleep(1000);
-            dte.ToolWindows.SolutionExplorer.GetItem($"{parentNodeName}\\Parameters.xml").UIHierarchyItems.Expanded = true;
-            dte.ToolWindows.SolutionExplorer.GetItem($"{parentNodeName}\\Parameters.xml\\{nodeName}").Select(vsUISelectionType.vsUISelectionTypeSelect);
+
+            var fileName = SolutionExplorerExtensions.SelectedItemPath;
+            var projectFullName = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.FullName;
+
+            var parameterizationProject = new ParameterizationProject(projectFullName);
+            if (parameterizationProject.Initialize())
+            {
+                var projectItem = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(fileName);
+                projectItem.Properties.Item("ItemType").Value = "Parameterization";
+                Nester.ApplyNesting(itemPath);
+
+                System.Threading.Thread.Sleep(1000);
+                dte.ToolWindows.SolutionExplorer.GetItem($"{parentNodeName}\\Parameters.xml").UIHierarchyItems.Expanded = true;
+                dte.ToolWindows.SolutionExplorer.GetItem($"{parentNodeName}\\Parameters.xml\\{nodeName}").Select(vsUISelectionType.vsUISelectionTypeSelect);
+            }
         }
+
+
     }
 }

@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="KeepSetParametersOutOfPackageCommand.cs" company="Company">
+// <copyright file="AddParameterizationTargetCommand.cs" company="Company">
 //     Copyright (c) Company.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
@@ -10,17 +10,14 @@ using System.Globalization;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using WebDeployParametersToolkit.Extensions;
-using WebDeployParametersToolkit.Utilities;
 using System.IO;
-using EnvDTE;
-using System.Diagnostics;
 
 namespace WebDeployParametersToolkit
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class KeepSetParametersOutOfPackageCommand
+    internal sealed class AddParameterizationTargetCommand
     {
         /// <summary>
         /// Command ID.
@@ -38,11 +35,11 @@ namespace WebDeployParametersToolkit
         private readonly Package package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeepSetParametersOutOfPackageCommand"/> class.
+        /// Initializes a new instance of the <see cref="AddParameterizationTargetCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private KeepSetParametersOutOfPackageCommand(Package package)
+        private AddParameterizationTargetCommand(Package package)
         {
             if (package == null)
             {
@@ -68,21 +65,29 @@ namespace WebDeployParametersToolkit
 
             SolutionExplorerExtensions.LoadSelectedItemPath();
 
-            if (CanApplySetParametersBuildOptions())
+            if (NeedsInitialization())
             {
                 menuItem.Visible = true;
             }
         }
 
-        private bool CanApplySetParametersBuildOptions()
+        private bool NeedsInitialization()
         {
-            return (!string.IsNullOrEmpty(SolutionExplorerExtensions.SelectedItemPath) && string.Compare("Parameters.xml", Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), true) == 0);
+            var filePath = SolutionExplorerExtensions.SelectedItemPath;
+
+            if (!string.IsNullOrEmpty(filePath) && string.Compare("Parameters.xml", Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), true) == 0)
+            {
+                var projectFullName = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
+                var project = new ParameterizationProject(projectFullName);
+                return project.NeedsInitialization;
+            }
+            return false;
         }
 
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static KeepSetParametersOutOfPackageCommand Instance
+        public static AddParameterizationTargetCommand Instance
         {
             get;
             private set;
@@ -105,7 +110,7 @@ namespace WebDeployParametersToolkit
         /// <param name="package">Owner package, not null.</param>
         public static void Initialize(Package package)
         {
-            Instance = new KeepSetParametersOutOfPackageCommand(package);
+            Instance = new AddParameterizationTargetCommand(package);
         }
 
         /// <summary>
@@ -117,25 +122,14 @@ namespace WebDeployParametersToolkit
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            var fileName = SolutionExplorerExtensions.SelectedItemPath;
-            var project = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
-            var properties = project.Properties;
-            foreach (Property property in properties)
-            {
- Debug.WriteLine(property.Name);
-            }
-           
-            //string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            //string title = "KeepSetParametersOutOfPackageCommand";
+            var filePath = SolutionExplorerExtensions.SelectedItemPath;
 
-            //// Show a message box to prove we were here
-            //VsShellUtilities.ShowMessageBox(
-            //    this.ServiceProvider,
-            //    message,
-            //    title,
-            //    OLEMSGICON.OLEMSGICON_INFO,
-            //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
-            //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            if (!string.IsNullOrEmpty(filePath) && string.Compare("Parameters.xml", Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), true) == 0)
+            {
+                var projectFullName = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
+                var project = new ParameterizationProject(projectFullName);
+                project.Initialize();
+            }
         }
     }
 }

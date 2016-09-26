@@ -58,8 +58,12 @@ namespace WebDeployParametersToolkit
             // initialization is the Initialize method.
         }
 
+        public static DTE CoreDte { get; set; }
 
         public static DTE2 DteInstance { get; set; }
+
+        public static SVsSolution Solution { get; set; }
+
         public static IVsUIShell Shell { get; set; }
 
         /// <summary>
@@ -73,15 +77,15 @@ namespace WebDeployParametersToolkit
 
             base.Initialize();
 
+            CoreDte = GetService(typeof(DTE)) as DTE;
             DteInstance = GetService(typeof(DTE)) as DTE2;
             Shell = GetService(typeof(SVsUIShell)) as IVsUIShell;
-
+            Solution = GetService(typeof(SVsSolution)) as SVsSolution;
+            
             Nester.Initialize(DteInstance);
             ApplyMissingParametersCommand.Initialize(this);
             GenerateParametersCommand.Initialize(this);
-            KeepSetParametersOutOfPackageCommand.Initialize(this);
-            
-
+            AddParameterizationTargetCommand.Initialize(this);
         }
 
        
