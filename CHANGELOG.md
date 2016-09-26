@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Generate parameter for compilation debug attribute
+- [ ] Generate parameters for smtp settings
+- [ ] Generate parameters for session state settings
 - [ ] SetParameters.xml intellisense
 
 Features that have a checkmark are complete and available for
