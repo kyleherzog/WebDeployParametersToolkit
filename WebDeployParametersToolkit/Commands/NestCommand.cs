@@ -82,9 +82,9 @@ namespace WebDeployParametersToolkit
             var fileName = Path.GetFileName(itemPath).ToLower();
             var extension = Path.GetExtension(itemPath);
             var directory = Path.GetDirectoryName(itemPath);
-            var parametersItem = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(Path.Combine(directory, "Parameters.xml"));
+            var parametersItem = VSPackage.DteInstance.Solution.FindProjectItem(Path.Combine(directory, "Parameters.xml"));
 
-            var setParametersItem = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(itemPath);
+            var setParametersItem = VSPackage.DteInstance.Solution.FindProjectItem(itemPath);
 
             var currentParent = setParametersItem?.Collection?.Parent as ProjectItem;
 
@@ -129,7 +129,7 @@ namespace WebDeployParametersToolkit
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            var dte = WebDeployParametersToolkitPackage.DteInstance;
+            var dte = VSPackage.DteInstance;
                        
             //save node name details to maintain selection in solution explorer
             var selectedItem = ((Array)dte.ToolWindows.SolutionExplorer.SelectedItems).Cast<UIHierarchyItem>().First();
@@ -141,12 +141,12 @@ namespace WebDeployParametersToolkit
 
 
             var fileName = SolutionExplorerExtensions.SelectedItemPath;
-            var projectFullName = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.FullName;
+            var projectFullName = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.FullName;
 
             var parameterizationProject = new ParameterizationProject(projectFullName);
             if (parameterizationProject.Initialize())
             {
-                var projectItem = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(fileName);
+                var projectItem = VSPackage.DteInstance.Solution.FindProjectItem(fileName);
                 projectItem.Properties.Item("ItemType").Value = "Parameterization";
                 Nester.ApplyNesting(itemPath);
 

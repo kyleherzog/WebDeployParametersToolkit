@@ -2,7 +2,6 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/pjlmikxue6721vab?svg=true)](https://ci.appveyor.com/project/kyleherzog/webdeployparameterstoolkit)
 
-<!-- Update the VS Gallery link after you upload the VSIX-->
 Download this extension from the [VS Gallery](https://visualstudiogallery.msdn.microsoft.com/12c8e661-6a7c-4ab5-bbec-eb2ffe5be066)
 or get the [CI build](http://vsixgallery.com/extension/6435437e-72fb-4626-9a47-865f185ce258/).
 

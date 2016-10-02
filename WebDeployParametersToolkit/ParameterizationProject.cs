@@ -38,7 +38,7 @@ namespace WebDeployParametersToolkit
         {
             if (NeedsInitialization)
             {
-                if (WebDeployParametersToolkitPackage.CoreDte.ItemOperations.PromptToSave == EnvDTE.vsPromptResult.vsPromptResultCancelled)
+                if (VSPackage.CoreDte.ItemOperations.PromptToSave == EnvDTE.vsPromptResult.vsPromptResultCancelled)
                 {
                     return false;
                 }
@@ -72,7 +72,7 @@ namespace WebDeployParametersToolkit
 
         private static void ReloadProject(string projectFullName)
         {
-            var solution = WebDeployParametersToolkitPackage.Solution as IVsSolution4;
+            var solution = VSPackage.Solution as IVsSolution4;
             //var solution = ServiceProvider.GetService(typeof(SVsSolution)) as IVsSolution4;
             var projectGuid = GetProjectGuid(projectFullName);
             solution.ReloadProject(projectGuid);
@@ -80,7 +80,7 @@ namespace WebDeployParametersToolkit
 
         private static void UnloadProject(string projectFullName)
         {
-            var solution = WebDeployParametersToolkitPackage.Solution as IVsSolution4;
+            var solution = VSPackage.Solution as IVsSolution4;
             //var solution = ServiceProvider.GetService(typeof(SVsSolution)) as IVsSolution4;
             var projectGuid = GetProjectGuid(projectFullName);
 
@@ -89,7 +89,7 @@ namespace WebDeployParametersToolkit
 
         private static Guid GetProjectGuid(string projectFullName)
         {
-            var solution = WebDeployParametersToolkitPackage.Solution as IVsSolution;
+            var solution = VSPackage.Solution as IVsSolution;
             //var solution = ServiceProvider.GetService(typeof(SVsSolution)) as IVsSolution;
             IVsHierarchy hierarchy;
             solution.GetProjectOfUniqueName(projectFullName, out hierarchy);

@@ -34,23 +34,17 @@ namespace WebDeployParametersToolkit
     /// </para>
     /// </remarks>
     [PackageRegistration(UseManagedResourcesOnly = true)]
-    [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
+    [InstalledProductRegistration("#110", "#112", Vsix.Version, IconResourceID = 400)] // Info on this package for Help/About
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [Guid(WebDeployParametersToolkitPackage.PackageGuidString)]
+    [Guid(PackageGuids.guidWebDeployParametersToolkitPackageString)]
     [ProvideAutoLoad(UIContextGuids80.SolutionHasSingleProject)] 
     [ProvideAutoLoad(UIContextGuids80.SolutionHasMultipleProjects)]
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
-    public sealed class WebDeployParametersToolkitPackage : Package
+    public sealed class VSPackage : Package
     {
-        /// <summary>
-        /// WebDeployParametersToolkitPackage GUID string.
-        /// </summary>
-        public const string PackageGuidString = "44ad5888-3abd-4031-b7fe-b9ed0c971969";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="GenerateSetParametersCommand"/> class.
         /// </summary>
-        public WebDeployParametersToolkitPackage()
+        public VSPackage()
         {
             // Inside this method you can place any initialization code that does not require
             // any Visual Studio service because at this point the package object is created but

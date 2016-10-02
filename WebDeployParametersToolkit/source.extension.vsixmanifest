@@ -6,6 +6,7 @@
     <Description xml:space="preserve">Tools to make it easy to work with parameters in Web Deploy (MSDeploy).  This includes automatically generating a Parameters.xml file from a web.config file, generating SetParameters.xml file from Parameters.xml</Description>
     <MoreInfo>https://github.com/kyleherzog/WebDeployParametersToolkit</MoreInfo>
     <License>Resources\LICENSE</License>
+    <ReleaseNotes>https://raw.githubusercontent.com/kyleherzog/WebDeployParametersToolkit/master/CHANGELOG.md</ReleaseNotes>
     <Icon>Resources\PackageIcon.png</Icon>
     <PreviewImage>Resources\PreviewImage.png</PreviewImage>
     <Tags>SetParameters, WebDeploy, MSDeploy, Parameters</Tags>

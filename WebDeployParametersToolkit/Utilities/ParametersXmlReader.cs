@@ -45,7 +45,7 @@ namespace WebDeployParametersToolkit.Utilities
         {
             var results = new Dictionary<string, string>();
 
-            var project = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
+            var project = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
 
             results.Add("IIS Web Application Name", project.Name);
 

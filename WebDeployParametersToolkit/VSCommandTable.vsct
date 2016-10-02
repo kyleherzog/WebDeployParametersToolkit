@@ -56,7 +56,7 @@
         <Parent guid="guidWebDeployParametersToolkitPackageCmdSet" id="MyMenuGroup" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
-        <Icon guid="guidImages" id="bmpPic1" />
+        <Icon guid="guidImages" id="GenerateSetParametersGlyph" />
         <Strings>
           <ButtonText>Generate SetParameters.xml</ButtonText>
         </Strings>
@@ -65,7 +65,7 @@
         <Parent guid="guidWebDeployParametersToolkitPackageCmdSet" id="MyMenuGroup" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
-        <Icon guid="guidImages1" id="bmpPic1" />
+        <Icon guid="guidImages1" id="NestCommandGlyph" />
         <Strings>
           <ButtonText>Nest Under Parameters.xml</ButtonText>
         </Strings>
@@ -74,7 +74,7 @@
         <Parent guid="guidWebDeployParametersToolkitPackageCmdSet" id="MyMenuGroup" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
-        <Icon guid="guidImages2" id="bmpPic1" />
+        <Icon guid="guidImages2" id="ApplyMissingParametersGlyph" />
         <Strings>
           <ButtonText>Import Missing Parameters</ButtonText>
         </Strings>
@@ -83,7 +83,7 @@
         <Parent guid="guidWebDeployParametersToolkitPackageCmdSet" id="MyMenuGroup" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
-        <Icon guid="guidImages3" id="bmpPic1" />
+        <Icon guid="guidImages3" id="GenerateParametersGlyph" />
         <Strings>
           <ButtonText>Generate Parameters.xml</ButtonText>
         </Strings>
@@ -92,7 +92,7 @@
         <Parent guid="guidWebDeployParametersToolkitPackageCmdSet" id="MyMenuGroup" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
-        <Icon guid="guidImages4" id="bmpPic1" />
+        <Icon guid="guidImages4" id="AddParameterizationTargetGlyph" />
         <Strings>
           <ButtonText>Add Parameterization Build Target</ButtonText>
         </Strings>
@@ -106,11 +106,11 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\GenerateSetParametersCommand.png" usedList="bmpPic1" />
-      <Bitmap guid="guidImages1" href="Resources\NestCommand.png" usedList="bmpPic1" />
-      <Bitmap guid="guidImages2" href="Resources\ApplyMissingParametersCommand.png" usedList="bmpPic1" />
-      <Bitmap guid="guidImages3" href="Resources\GenerateParametersCommand.png" usedList="bmpPic1" />
-      <Bitmap guid="guidImages4" href="Resources\AddParameterizationTargetCommand.png" usedList="bmpPic1" />
+      <Bitmap guid="guidImages" href="Resources\GenerateSetParametersCommand.png" usedList="GenerateSetParametersGlyph" />
+      <Bitmap guid="guidImages1" href="Resources\NestCommand.png" usedList="NestCommandGlyph" />
+      <Bitmap guid="guidImages2" href="Resources\ApplyMissingParametersCommand.png" usedList="ApplyMissingParametersGlyph" />
+      <Bitmap guid="guidImages3" href="Resources\GenerateParametersCommand.png" usedList="GenerateParametersGlyph" />
+      <Bitmap guid="guidImages4" href="Resources\AddParameterizationTargetCommand.png" usedList="AddParameterizationTargetGlyph" />
     </Bitmaps>
   </Commands>
 
@@ -129,23 +129,23 @@
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{dc8edac2-f399-4700-bc21-e3638ee03a01}">
-      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="GenerateSetParametersGlyph" value="1" />
     </GuidSymbol>
 
     <GuidSymbol value="{98587af9-0198-4b19-80b3-7ffa3c51bb51}" name="guidImages1">
-      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="NestCommandGlyph" value="1" />
     </GuidSymbol>
 
     <GuidSymbol value="{7c3c774b-ce35-4dd9-882a-2419a415e699}" name="guidImages2">
-      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="ApplyMissingParametersGlyph" value="1" />
     </GuidSymbol>
 
     <GuidSymbol value="{d5fc3208-e5eb-4e38-ad72-ee698a0671dc}" name="guidImages3">
-      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="GenerateParametersGlyph" value="1" />
     </GuidSymbol>
   
     <GuidSymbol value="{556b0e9f-c7c7-402a-a6e4-5a423bf87c5a}" name="guidImages4">
-      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="AddParameterizationTargetGlyph" value="1" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

@@ -135,7 +135,7 @@ namespace WebDeployParametersToolkit
                 if (VsShellUtilities.PromptYesNo("Merge missing settings into existing Parameters.xml file?",
                         "Update File?",
                         OLEMSGICON.OLEMSGICON_QUERY,
-                        WebDeployParametersToolkitPackage.Shell))
+                        VSPackage.Shell))
                 {
                     UpdateParametersXml(settings, targetName);
                 }
@@ -143,7 +143,7 @@ namespace WebDeployParametersToolkit
             else
             {
                 CreateParametersXml(settings, targetName);
-                var project = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
+                var project = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
                 project.ProjectItems.AddFromFile(targetName);
             }
         }

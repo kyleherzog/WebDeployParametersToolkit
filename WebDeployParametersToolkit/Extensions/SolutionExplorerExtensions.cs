@@ -13,7 +13,7 @@ namespace WebDeployParametersToolkit.Extensions
 
         public static void LoadSelectedItemPath()
         {
-            var dte = WebDeployParametersToolkitPackage.DteInstance;
+            var dte = VSPackage.DteInstance;
 
             var paths = dte.ToolWindows.SolutionExplorer.SelectedItemPaths();
 

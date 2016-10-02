@@ -113,7 +113,7 @@ namespace WebDeployParametersToolkit
         private void MenuItemCallback(object sender, EventArgs e)
         {
             var dialog = new FileNameDialog();
-            var hwnd = new IntPtr(WebDeployParametersToolkitPackage.DteInstance.MainWindow.HWnd);
+            var hwnd = new IntPtr(VSPackage.DteInstance.MainWindow.HWnd);
             var window = (System.Windows.Window)HwndSource.FromHwnd(hwnd).RootVisual;
             dialog.Owner = window;
 
@@ -136,14 +136,14 @@ namespace WebDeployParametersToolkit
                 return;
             }
 
-            var projectFullName = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(sourceName).ContainingProject.FullName;
+            var projectFullName = VSPackage.DteInstance.Solution.FindProjectItem(sourceName).ContainingProject.FullName;
 
             var parameterizationProject = new ParameterizationProject(projectFullName);
             if (parameterizationProject.Initialize())
             {
                 var parameters = ParseParameters(sourceName);
                 CreateSetXml(parameters, targetName);
-                var parent = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(sourceName);
+                var parent = VSPackage.DteInstance.Solution.FindProjectItem(sourceName);
                 var item = parent.ProjectItems.AddFromFile(targetName);
                 item.Properties.Item("ItemType").Value = "Parameterization";
             }

@@ -78,7 +78,7 @@ namespace WebDeployParametersToolkit
 
             if (!string.IsNullOrEmpty(filePath) && string.Compare("Parameters.xml", Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), true) == 0)
             {
-                var projectFullName = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
+                var projectFullName = VSPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
                 var project = new ParameterizationProject(projectFullName);
                 return project.NeedsInitialization;
             }
@@ -127,11 +127,11 @@ namespace WebDeployParametersToolkit
 
             if (!string.IsNullOrEmpty(filePath) && string.Compare("Parameters.xml", Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), true) == 0)
             {
-                var projectFullName = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
+                var projectFullName = VSPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
                 var project = new ParameterizationProject(projectFullName);
                 project.Initialize();
 
-                var parent = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(filePath);
+                var parent = VSPackage.DteInstance.Solution.FindProjectItem(filePath);
 
                 foreach (var item in parent.ProjectItems)
                 {

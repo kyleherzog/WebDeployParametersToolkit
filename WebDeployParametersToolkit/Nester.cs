@@ -53,7 +53,7 @@ namespace WebDeployParametersToolkit
 
         public static void ApplyNesting(string itemPath)
         {
-            var item = WebDeployParametersToolkitPackage.DteInstance.Solution.FindProjectItem(itemPath);
+            var item = VSPackage.DteInstance.Solution.FindProjectItem(itemPath);
             ApplyNesting(item);
         }
 
@@ -74,7 +74,7 @@ namespace WebDeployParametersToolkit
                 if (fileName.StartsWith("setparameters") && extension == ".xml")
                 {
                     var parentName = Path.Combine(Path.GetDirectoryName(fullFileName), "Parameters.xml");
-                    var dte = WebDeployParametersToolkitPackage.DteInstance;
+                    var dte = VSPackage.DteInstance;
                     var parent = dte.Solution.FindProjectItem(parentName);
                     if (parent != null)
                     {
