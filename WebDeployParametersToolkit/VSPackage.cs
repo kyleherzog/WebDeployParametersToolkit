@@ -1,18 +1,9 @@
-﻿
-using System;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.OLE.Interop;
+﻿using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32;
-using EnvDTE80;
-using EnvDTE;
-using System.Collections.Generic;
+using System;
+using System.Runtime.InteropServices;
 
 namespace WebDeployParametersToolkit
 {
@@ -37,7 +28,7 @@ namespace WebDeployParametersToolkit
     [InstalledProductRegistration("#110", "#112", Vsix.Version, IconResourceID = 400)] // Info on this package for Help/About
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PackageGuids.guidWebDeployParametersToolkitPackageString)]
-    [ProvideAutoLoad(UIContextGuids80.SolutionHasSingleProject)] 
+    [ProvideAutoLoad(UIContextGuids80.SolutionHasSingleProject)]
     [ProvideAutoLoad(UIContextGuids80.SolutionHasMultipleProjects)]
     public sealed class VSPackage : Package
     {
@@ -75,13 +66,11 @@ namespace WebDeployParametersToolkit
             DteInstance = GetService(typeof(DTE)) as DTE2;
             Shell = GetService(typeof(SVsUIShell)) as IVsUIShell;
             Solution = GetService(typeof(SVsSolution)) as SVsSolution;
-            
+
             Nester.Initialize(DteInstance);
             ApplyMissingParametersCommand.Initialize(this);
             GenerateParametersCommand.Initialize(this);
             AddParameterizationTargetCommand.Initialize(this);
         }
-
-       
     }
 }

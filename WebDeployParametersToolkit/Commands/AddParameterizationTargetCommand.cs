@@ -4,14 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using WebDeployParametersToolkit.Extensions;
 using System.IO;
-using EnvDTE;
+using WebDeployParametersToolkit.Extensions;
 
 namespace WebDeployParametersToolkit
 {

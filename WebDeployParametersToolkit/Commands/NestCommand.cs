@@ -5,9 +5,7 @@
 //------------------------------------------------------------------------------
 
 using EnvDTE;
-using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.ComponentModel.Design;
 using System.IO;
@@ -130,15 +128,14 @@ namespace WebDeployParametersToolkit
         private void MenuItemCallback(object sender, EventArgs e)
         {
             var dte = VSPackage.DteInstance;
-                       
+
             //save node name details to maintain selection in solution explorer
             var selectedItem = ((Array)dte.ToolWindows.SolutionExplorer.SelectedItems).Cast<UIHierarchyItem>().First();
-            
+
             var selectedParent = selectedItem.Collection.Parent as UIHierarchyItem;
             var parentNodeName = selectedParent.NodeName();
             var nodeName = selectedItem.Name;
             var itemPath = SolutionExplorerExtensions.SelectedItemPath;
-
 
             var fileName = SolutionExplorerExtensions.SelectedItemPath;
             var projectFullName = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.FullName;
@@ -155,7 +152,5 @@ namespace WebDeployParametersToolkit
                 dte.ToolWindows.SolutionExplorer.GetItem($"{parentNodeName}\\Parameters.xml\\{nodeName}").Select(vsUISelectionType.vsUISelectionTypeSelect);
             }
         }
-
-
     }
 }

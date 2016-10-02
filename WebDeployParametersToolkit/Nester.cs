@@ -22,7 +22,6 @@ namespace WebDeployParametersToolkit
 
         private static void ItemRenamed(ProjectItem item, string oldName)
         {
-
             ItemAddedRenamed(item);
         }
 
@@ -44,7 +43,7 @@ namespace WebDeployParametersToolkit
             //        var parameterizationProject = new ParameterizationProject(item.ContainingProject.FullName);
             //        if (parameterizationProject.Initialize())
             //        {
-            //            //don't try to use the ProjectItem object.  It will fail if Initialization was done. Use the file 
+            //            //don't try to use the ProjectItem object.  It will fail if Initialization was done. Use the file
             //            ApplyNesting(itemFileName);
             //        }
             //    }
