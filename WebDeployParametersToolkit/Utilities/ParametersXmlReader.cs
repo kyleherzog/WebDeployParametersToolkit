@@ -43,31 +43,41 @@ namespace WebDeployParametersToolkit.Utilities
 
         public static IDictionary<string, string> GetAutoParameters(string fileName)
         {
-            var results = new Dictionary<string, string>();
+            var folder = Path.GetDirectoryName(fileName);
+            var configFileName = Path.Combine(folder, "web.config");
+
+            var results = GetConnectionStringParameters(configFileName);
 
             var project = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
 
             results.Add("IIS Web Application Name", project.Name);
+            return results;
+        }
 
-            var folder = Path.GetDirectoryName(fileName);
+        private static IDictionary<string, string> GetConnectionStringParameters(string configFileName)
+        {
+            var results = new Dictionary<string, string>();
 
-            var document = new XmlDocument();
-            document.Load(Path.Combine(folder, "web.config"));
-
-            var connectionStringsNode = document.SelectSingleNode("/configuration/connectionStrings");
-            if (connectionStringsNode != null)
+            if (File.Exists(configFileName))
             {
-                var nav = connectionStringsNode.CreateNavigator();
+                var document = new XmlDocument();
 
-                if (nav.MoveToFirstChild())
+                document.Load(configFileName);
+                var connectionStringsNode = document.SelectSingleNode("/configuration/connectionStrings");
+                if (connectionStringsNode != null)
                 {
-                    do
+                    var nav = connectionStringsNode.CreateNavigator();
+
+                    if (nav.MoveToFirstChild())
                     {
-                        if (nav.Name == "add")
+                        do
                         {
-                            results.Add($"{nav.GetAttribute("name", string.Empty)}-Web.config Connection String", nav.GetAttribute("connectionString", string.Empty));
-                        }
-                    } while (nav.MoveToNext());
+                            if (nav.Name == "add")
+                            {
+                                results.Add($"{nav.GetAttribute("name", string.Empty)}-Web.config Connection String", nav.GetAttribute("connectionString", string.Empty));
+                            }
+                        } while (nav.MoveToNext());
+                    }
                 }
             }
             return results;
