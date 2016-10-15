@@ -18,6 +18,8 @@ namespace WebDeployParametersToolkit.Utilities
 
         public bool SkipMailSettings { get; set; }
 
+        public bool SkipSessionStateSettings { get; set; }
+
         public string FileName { get; }
 
         public IEnumerable<WebConfigSetting> Read()
@@ -41,6 +43,11 @@ namespace WebDeployParametersToolkit.Utilities
                 {
                     results.Add(new WebConfigSetting() { Name = "Smtp.NeworkHost", NodePath = "/configuration/system.net/mailSettings/smtp/network/@host" });
                     results.Add(new WebConfigSetting() { Name = "Smtp.DeliveryMethod", NodePath = "/configuration/system.net/mailSettings/smtp/@deliveryMethod" });
+                }
+                if (!SkipSessionStateSettings)
+                {
+                    results.Add(new WebConfigSetting() { Name = "SessionState.Mode", NodePath = "/configuration/system.web/sessionState/@mode" });
+                    results.Add(new WebConfigSetting() { Name = "SessionState.ConnectionString", NodePath = "/configuration/system.web/sessionState/sqlConnectionString" });
                 }
 
             }

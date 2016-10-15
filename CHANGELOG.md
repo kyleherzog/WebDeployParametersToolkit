@@ -1,8 +1,7 @@
 # Roadmap
 
-- [ ] Generate parameter for compilation debug attribute
-- [ ] Generate parameters for smtp settings
-- [ ] Generate parameters for session state settings
+- [ ] User configurable options for which parameters to generate.
+- [ ] Option to set default parameters to values from web.config or to tokenized values.
 - [ ] SetParameters.xml intellisense
 
 Features that have a checkmark are complete and available for
@@ -39,3 +38,10 @@ on the official Visual Studio extension gallery.
 **2016-9-26**
 
 - [x] Configure project to copy SetParameters.xml files to drop location during build
+
+## 1.4
+**2015-10-15**
+- [x] Generate parameter for compilation debug attribute
+- [x] Generate parameters for mailSettings
+- [x] Generate parameters for session state settings
+- [x] Bug fix for *Import Missing Parameters*
