@@ -16,6 +16,8 @@ namespace WebDeployParametersToolkit.Utilities
 
         public bool SkipCompilationDebug { get; set; }
 
+        public bool SkipMailSettings { get; set; }
+
         public string FileName { get; }
 
         public IEnumerable<WebConfigSetting> Read()
@@ -35,6 +37,12 @@ namespace WebDeployParametersToolkit.Utilities
                 {
                     results.Add(new WebConfigSetting() { Name = "CompilationDebug", NodePath = "/configuration/system.web/compilation/@debug" });
                 }
+                if (!SkipMailSettings)
+                {
+                    results.Add(new WebConfigSetting() { Name = "Smtp.NeworkHost", NodePath = "/configuration/system.net/mailSettings/smtp/network/@host" });
+                    results.Add(new WebConfigSetting() { Name = "Smtp.DeliveryMethod", NodePath = "/configuration/system.net/mailSettings/smtp/@deliveryMethod" });
+                }
+
             }
             return results;
         }
