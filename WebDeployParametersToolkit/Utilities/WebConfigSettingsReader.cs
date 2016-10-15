@@ -1,17 +1,47 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 
 namespace WebDeployParametersToolkit.Utilities
 {
-    public static class WebConfigSettingsReader
+    public class WebConfigSettingsReader
     {
-        public static IEnumerable<WebConfigSetting> ReadSettings(string fileName)
+        
+        public WebConfigSettingsReader(string fileName)
+        {
+            FileName = fileName;
+        }
+
+        public bool SkipApplicationSettings { get; set; }
+
+        public bool SkipCompilationDebug { get; set; }
+
+        public string FileName { get; }
+
+        public IEnumerable<WebConfigSetting> Read()
         {
             var results = new List<WebConfigSetting>();
 
-            var document = new XmlDocument();
-            document.Load(fileName);
+            if (File.Exists(FileName))
+            {
+                var document = new XmlDocument();
+                document.Load(FileName);
 
+                if (!SkipApplicationSettings)
+                {
+                    results.AddRange(ReadApplicationSettings(document));
+                }
+                if (!SkipApplicationSettings)
+                {
+                    results.Add(new WebConfigSetting() { Name = "CompilationDebug", NodePath = "/configuration/system.web/compilation/@debug" });
+                }
+            }
+            return results;
+        }
+
+        private static IEnumerable<WebConfigSetting> ReadApplicationSettings(XmlDocument document)
+        {
+            var results = new List<WebConfigSetting>();
             var basePath = "/configuration/applicationSettings";
             var settingsNode = document.SelectSingleNode(basePath);
 
@@ -48,7 +78,6 @@ namespace WebDeployParametersToolkit.Utilities
                     } while (nav.MoveToNext());
                 }
             }
-
             return results;
         }
     }

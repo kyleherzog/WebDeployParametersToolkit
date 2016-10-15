@@ -30,10 +30,11 @@ namespace WebDeployParametersToolkit.Utilities
                         results.Add(name, value);
                     }
                     else if (nav.Name == "setParameter")
-                    {
+                    {                                               
                         var name = nav.GetAttribute("name", string.Empty);
                         var value = nav.GetAttribute("value", string.Empty);
-                        results.Add(name, value);
+                        if (!results.ContainsKey(name)) //might already be there via GetAutoParameters
+                            results.Add(name, value);
                     }
                 }
             } while (nav.MoveToNext());

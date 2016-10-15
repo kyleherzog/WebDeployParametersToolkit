@@ -126,7 +126,8 @@ namespace WebDeployParametersToolkit
 
         private void GenerateFile(string fileName)
         {
-            var settings = WebConfigSettingsReader.ReadSettings(fileName);
+            var reader = new WebConfigSettingsReader(fileName);
+            var settings = reader.Read();
 
             var folder = Path.GetDirectoryName(fileName);
             var targetName = Path.Combine(folder, "Parameters.xml");
