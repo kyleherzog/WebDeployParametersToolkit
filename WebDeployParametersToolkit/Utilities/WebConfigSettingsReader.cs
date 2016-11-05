@@ -12,13 +12,13 @@ namespace WebDeployParametersToolkit.Utilities
             FileName = fileName;
         }
 
-        public bool SkipApplicationSettings { get; set; }
+        public bool IncludeApplicationSettings { get; set; } = true;
 
-        public bool SkipCompilationDebug { get; set; }
+        public bool IncludeCompilationDebug { get; set; } = true;
 
-        public bool SkipMailSettings { get; set; }
+        public bool IncludeMailSettings { get; set; } = true;
 
-        public bool SkipSessionStateSettings { get; set; }
+        public bool IncludeSessionStateSettings { get; set; } = true;
 
         public string FileName { get; }
 
@@ -31,20 +31,20 @@ namespace WebDeployParametersToolkit.Utilities
                 var document = new XmlDocument();
                 document.Load(FileName);
 
-                if (!SkipApplicationSettings)
+                if (IncludeApplicationSettings)
                 {
                     results.AddRange(ReadApplicationSettings(document));
                 }
-                if (!SkipApplicationSettings)
+                if (IncludeApplicationSettings)
                 {
                     results.Add(new WebConfigSetting() { Name = "CompilationDebug", NodePath = "/configuration/system.web/compilation/@debug" });
                 }
-                if (!SkipMailSettings)
+                if (IncludeMailSettings)
                 {
                     results.Add(new WebConfigSetting() { Name = "Smtp.NeworkHost", NodePath = "/configuration/system.net/mailSettings/smtp/network/@host" });
                     results.Add(new WebConfigSetting() { Name = "Smtp.DeliveryMethod", NodePath = "/configuration/system.net/mailSettings/smtp/@deliveryMethod" });
                 }
-                if (!SkipSessionStateSettings)
+                if (IncludeSessionStateSettings)
                 {
                     results.Add(new WebConfigSetting() { Name = "SessionState.Mode", NodePath = "/configuration/system.web/sessionState/@mode" });
                     results.Add(new WebConfigSetting() { Name = "SessionState.ConnectionString", NodePath = "/configuration/system.web/sessionState/sqlConnectionString" });

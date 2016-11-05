@@ -30,6 +30,7 @@ namespace WebDeployParametersToolkit
     [Guid(PackageGuids.guidWebDeployParametersToolkitPackageString)]
     [ProvideAutoLoad(UIContextGuids80.SolutionHasSingleProject)]
     [ProvideAutoLoad(UIContextGuids80.SolutionHasMultipleProjects)]
+    [ProvideOptionPage(typeof(OptionsPageGrid), "Web Deploy Parameters Toolkit", "General", 0, 0, true)]
     public sealed class VSPackage : Package
     {
         /// <summary>
@@ -51,6 +52,8 @@ namespace WebDeployParametersToolkit
 
         public static IVsUIShell Shell { get; set; }
 
+        public static OptionsPageGrid OptionsPage { get; set; }
+
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
         /// where you can put all the initialization code that rely on services provided by VisualStudio.
@@ -67,10 +70,13 @@ namespace WebDeployParametersToolkit
             Shell = GetService(typeof(SVsUIShell)) as IVsUIShell;
             Solution = GetService(typeof(SVsSolution)) as SVsSolution;
 
+            OptionsPage = (OptionsPageGrid)GetDialogPage(typeof(OptionsPageGrid));
+
             Nester.Initialize(DteInstance);
             ApplyMissingParametersCommand.Initialize(this);
             GenerateParametersCommand.Initialize(this);
             AddParameterizationTargetCommand.Initialize(this);
         }
+
     }
 }

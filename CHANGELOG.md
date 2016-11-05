@@ -1,6 +1,5 @@
 # Roadmap
-
-- [ ] User configurable options for which parameters to generate.
+- [ ] Open files in editor window after being generated.
 - [ ] Option to set default parameters to values from web.config or to tokenized values.
 - [ ] SetParameters.xml intellisense
 
@@ -45,3 +44,7 @@ on the official Visual Studio extension gallery.
 - [x] Generate parameters for mailSettings
 - [x] Generate parameters for session state settings
 - [x] Bug fix for *Import Missing Parameters*
+
+## 1.5
+**2015-11-5**
+- [x] User configurable options for which parameters to generate.

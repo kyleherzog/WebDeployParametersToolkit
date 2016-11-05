@@ -126,8 +126,7 @@ namespace WebDeployParametersToolkit
 
         private void GenerateFile(string fileName)
         {
-            var reader = new WebConfigSettingsReader(fileName);
-            var settings = reader.Read();
+            var settings = GetWebConfigSettings(fileName);
 
             var folder = Path.GetDirectoryName(fileName);
             var targetName = Path.Combine(folder, "Parameters.xml");
@@ -147,6 +146,18 @@ namespace WebDeployParametersToolkit
                 var project = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
                 project.ProjectItems.AddFromFile(targetName);
             }
+        }
+
+        private IEnumerable<WebConfigSetting> GetWebConfigSettings(string fileName)
+        {
+            var reader = new WebConfigSettingsReader(fileName);
+
+            reader.IncludeApplicationSettings = VSPackage.OptionsPage.IncludeApplicationSettings;
+            reader.IncludeCompilationDebug = VSPackage.OptionsPage.IncludeCompilationDebug;
+            reader.IncludeMailSettings = VSPackage.OptionsPage.IncludeMailSettings;
+            reader.IncludeSessionStateSettings = VSPackage.OptionsPage.IncludeSessionStateSettings;
+
+            return reader.Read();
         }
 
         private void UpdateParametersXml(IEnumerable<WebConfigSetting> settings, string fileName)
