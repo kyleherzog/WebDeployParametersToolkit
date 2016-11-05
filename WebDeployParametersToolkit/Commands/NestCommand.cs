@@ -77,7 +77,7 @@ namespace WebDeployParametersToolkit
             if (string.IsNullOrEmpty(itemPath))
                 return false;
 
-            var fileName = Path.GetFileName(itemPath).ToLower();
+            var fileName = Path.GetFileName(itemPath);
             var extension = Path.GetExtension(itemPath);
             var directory = Path.GetDirectoryName(itemPath);
             var parametersItem = VSPackage.DteInstance.Solution.FindProjectItem(Path.Combine(directory, "Parameters.xml"));
@@ -86,7 +86,11 @@ namespace WebDeployParametersToolkit
 
             var currentParent = setParametersItem?.Collection?.Parent as ProjectItem;
 
-            return (fileName.StartsWith("setparameters") && extension == ".xml" && parametersItem != null && setParametersItem != null && (currentParent == null || currentParent.Name != parametersItem.Name));
+            return (fileName.StartsWith("setparameters", StringComparison.OrdinalIgnoreCase) 
+                && extension.Equals(".xml", StringComparison.OrdinalIgnoreCase) 
+                && parametersItem != null 
+                && setParametersItem != null 
+                && (currentParent == null || currentParent.Name != parametersItem.Name));
         }
 
         /// <summary>

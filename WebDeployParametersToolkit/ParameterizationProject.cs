@@ -69,7 +69,6 @@ namespace WebDeployParametersToolkit
         private static void ReloadProject(string projectFullName)
         {
             var solution = VSPackage.Solution as IVsSolution4;
-            //var solution = ServiceProvider.GetService(typeof(SVsSolution)) as IVsSolution4;
             var projectGuid = GetProjectGuid(projectFullName);
             solution.ReloadProject(projectGuid);
         }
@@ -77,7 +76,6 @@ namespace WebDeployParametersToolkit
         private static void UnloadProject(string projectFullName)
         {
             var solution = VSPackage.Solution as IVsSolution4;
-            //var solution = ServiceProvider.GetService(typeof(SVsSolution)) as IVsSolution4;
             var projectGuid = GetProjectGuid(projectFullName);
 
             solution.UnloadProject(projectGuid, (int)_VSProjectUnloadStatus.UNLOADSTATUS_UnloadedByUser);
@@ -86,7 +84,6 @@ namespace WebDeployParametersToolkit
         private static Guid GetProjectGuid(string projectFullName)
         {
             var solution = VSPackage.Solution as IVsSolution;
-            //var solution = ServiceProvider.GetService(typeof(SVsSolution)) as IVsSolution;
             IVsHierarchy hierarchy;
             solution.GetProjectOfUniqueName(projectFullName, out hierarchy);
 
@@ -98,10 +95,7 @@ namespace WebDeployParametersToolkit
             hr = hierarchy.GetGuidProperty(VSITEMID_ROOT, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out projectGuid);
             ErrorHandler.ThrowOnFailure(hr);
 
-            if (projectGuid != null)
-                return projectGuid;
-            else
-                return Guid.Empty;
+            return projectGuid;
         }
     }
 }

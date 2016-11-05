@@ -71,7 +71,7 @@ namespace WebDeployParametersToolkit
 
         private bool CanGenerateSetParameters()
         {
-            return (!string.IsNullOrEmpty(SolutionExplorerExtensions.SelectedItemPath) && string.Compare("Parameters.xml", Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), true) == 0);
+            return (!string.IsNullOrEmpty(SolutionExplorerExtensions.SelectedItemPath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>

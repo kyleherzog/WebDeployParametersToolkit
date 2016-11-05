@@ -76,12 +76,12 @@ namespace WebDeployParametersToolkit
             if (string.IsNullOrEmpty(item))
                 return false;
 
-            var fileName = Path.GetFileName(item).ToLower();
+            var fileName = Path.GetFileName(item);
             var extension = Path.GetExtension(item);
             var directory = Path.GetDirectoryName(item);
             ParametersXmlItem = VSPackage.DteInstance.Solution.FindProjectItem(Path.Combine(directory, "Parameters.xml"));
 
-            return (fileName.StartsWith("setparameters") && extension == ".xml" && ParametersXmlItem != null);
+            return (fileName.StartsWith("setparameters", StringComparison.OrdinalIgnoreCase) && extension.Equals(".xml", StringComparison.OrdinalIgnoreCase) && ParametersXmlItem != null);
         }
 
         /// <summary>

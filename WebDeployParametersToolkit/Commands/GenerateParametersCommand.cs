@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -211,7 +212,7 @@ namespace WebDeployParametersToolkit
             {
                 writer.WriteStartElement("parameter");
                 writer.WriteAttributeString("name", setting.Name);
-                writer.WriteAttributeString("defaultvalue", $"__{setting.Name.ToUpper()}__");
+                writer.WriteAttributeString("defaultvalue", $"__{setting.Name.ToUpper(CultureInfo.CurrentCulture)}__");
                 writer.WriteAttributeString("description", $"{setting.Name} description.");
                 writer.WriteAttributeString("tags", string.Empty);
 
