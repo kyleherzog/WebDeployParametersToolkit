@@ -26,6 +26,9 @@ Select the web.config in solution explorer and right-click.
 
 Then select *Generate Parameters.xml* to have a Parameters.xml file automatically generated from settings in the web.config file.
 
+To control which settings are automatically generated, adjust the settings in the Visual Studio Tools > Options dialog.
+![Options Dialog](art/OptionsDialog.png)
+
 ### Generate SetParameters[Environment].xml
 Select the Parameters.xml file in solution explorer and right-click.
 
