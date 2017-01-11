@@ -26,12 +26,12 @@ on the official Visual Studio extension gallery.
 
 **2016-09-02**
 
-- [x] Fix for *setParameters* element being wrongly named *parameters* instead when generating SetParameters.xml files.
+- [x] Fix for *setParameters* element being wrongly named *parameters* instead when generating SetParameters.xml files
 
 ## 1.2
 **2016-09-07**
 
-- [x] Handling missing connectionStrings node in web.config file.
+- [x] Handling missing connectionStrings node in web.config file
 
 ## 1.3
 **2016-9-26**
@@ -39,12 +39,18 @@ on the official Visual Studio extension gallery.
 - [x] Configure project to copy SetParameters.xml files to drop location during build
 
 ## 1.4
-**2015-10-15**
+**2016-10-15**
 - [x] Generate parameter for compilation debug attribute
 - [x] Generate parameters for mailSettings
 - [x] Generate parameters for session state settings
 - [x] Bug fix for *Import Missing Parameters*
 
 ## 1.5
-**2015-11-5**
-- [x] User configurable options for which parameters to generate.
+**2016-11-5**
+- [x] User configurable options for which parameters to generate
+
+## 1.6
+**2017-1-10**
+- [x] Visual Studio 2017 support
+
+
