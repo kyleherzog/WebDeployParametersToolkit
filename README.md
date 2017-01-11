@@ -2,7 +2,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/pjlmikxue6721vab?svg=true)](https://ci.appveyor.com/project/kyleherzog/webdeployparameterstoolkit)
 
-Download this extension from the [VS Gallery](https://visualstudiogallery.msdn.microsoft.com/12c8e661-6a7c-4ab5-bbec-eb2ffe5be066)
+Download this extension from the [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=kherzog.WebDeployParametersToolkit)
 or get the [CI build](http://vsixgallery.com/extension/6435437e-72fb-4626-9a47-865f185ce258/).
 
 ---------------------------------------
@@ -67,7 +67,7 @@ This setting will result in these files being copied to the package location and
 ## Contribute
 For cloning and building this project yourself, make sure
 to install the
-[Extensibility Tools 2015](https://visualstudiogallery.msdn.microsoft.com/ab39a092-1343-46e2-b0f1-6a3f91155aa6)
+[Extensibility Tools](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.ExtensibilityTools)
 extension for Visual Studio which enables some features
 used by this project.
 
