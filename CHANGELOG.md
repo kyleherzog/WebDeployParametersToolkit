@@ -53,4 +53,8 @@ on the official Visual Studio extension gallery.
 **2017-1-10**
 - [x] Visual Studio 2017 support
 
-
+## 1.7
+**2017-2-18**
+- [x] Skip generating parameters for StringCollections and any other application settings not serialized as strings
+- [ ] 
+- [ ] 

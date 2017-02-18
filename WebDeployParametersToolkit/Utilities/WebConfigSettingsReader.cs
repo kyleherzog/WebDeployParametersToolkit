@@ -54,7 +54,7 @@ namespace WebDeployParametersToolkit.Utilities
             return results;
         }
 
-        private static IEnumerable<WebConfigSetting> ReadApplicationSettings(XmlDocument document)
+        public static IEnumerable<WebConfigSetting> ReadApplicationSettings(XmlDocument document)
         {
             var results = new List<WebConfigSetting>();
             var basePath = "/configuration/applicationSettings";
@@ -73,20 +73,24 @@ namespace WebDeployParametersToolkit.Utilities
                         {
                             do
                             {
-                                var settingName = nav.GetAttribute("name", string.Empty);
-                                var settingPath = $"{groupPath}/{nav.Name}[@name='{settingName}']/value/text()";
-
-                                if (results.Exists(s => s.Name == settingName))
+                                var serializeAs = nav.GetAttribute("serializeAs", string.Empty);
+                                if (serializeAs == "String")
                                 {
-                                    settingName = $"{groupName}.{settingName}";
+                                    var settingName = nav.GetAttribute("name", string.Empty);
+                                    var settingPath = $"{groupPath}/{nav.Name}[@name='{settingName}']/value/text()";
+
+                                    if (results.Exists(s => s.Name == settingName))
+                                    {
+                                        settingName = $"{groupName}.{settingName}";
+                                    }
+
+                                    var setting = new WebConfigSetting()
+                                    {
+                                        NodePath = settingPath,
+                                        Name = settingName
+                                    };
+                                    results.Add(setting);
                                 }
-
-                                var setting = new WebConfigSetting()
-                                {
-                                    NodePath = settingPath,
-                                    Name = settingName
-                                };
-                                results.Add(setting);
                             } while (nav.MoveToNext());
                         }
                         nav.MoveToParent();
