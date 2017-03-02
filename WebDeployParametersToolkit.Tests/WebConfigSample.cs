@@ -30,9 +30,13 @@ namespace WebDeployParametersToolkit.Tests
         public static WebConfigSample GetSimpleSettings()
         {
             var result = new WebConfigSample(Properties.Resources.SimpleSettings);
-            var pathFormat = "/configuration/applicationSettings/TestApp.Properties.Settings/setting[@name='{0}']/value/text()";            
-            result.AddExpectedApplicationSetting("SomeString", string.Format(pathFormat, "SomeString"));
-            result.AddExpectedApplicationSetting("SomeBoolean", string.Format(pathFormat, "SomeBoolean"));
+
+            var appSettingsPathFormat = "/configuration/appSettings/add[@key='{0}']/@value";
+            result.AddExpectedApplicationSetting("AppSettingsKey", string.Format(appSettingsPathFormat, "AppSettingsKey"));
+
+            var applicationSettinsPathFormat = "/configuration/applicationSettings/TestApp.Properties.Settings/setting[@name='{0}']/value/text()";
+            result.AddExpectedApplicationSetting("SomeString", string.Format(applicationSettinsPathFormat, "SomeString"));
+            result.AddExpectedApplicationSetting("SomeBoolean", string.Format(applicationSettinsPathFormat, "SomeBoolean"));
 
             return result;
         }

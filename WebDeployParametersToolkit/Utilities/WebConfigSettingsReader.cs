@@ -57,6 +57,26 @@ namespace WebDeployParametersToolkit.Utilities
         public static IEnumerable<WebConfigSetting> ReadApplicationSettings(XmlDocument document)
         {
             var results = new List<WebConfigSetting>();
+
+            var appSettingsPath = "/configuration/appSettings/add";
+            var appSettingsNodes = document.SelectNodes(appSettingsPath);
+            for (int i = 0; i < appSettingsNodes.Count; i++)
+            {
+                var node = appSettingsNodes[i];
+                var keyAttribute = node.Attributes["key"];
+                //var valueAttribute = node.Attributes["value"];
+                if (keyAttribute != null)
+                {
+                    var settingName = keyAttribute.Value;
+                    var settingPath = $"{appSettingsPath}[@key='{settingName}']/@value";
+                    results.Add(new WebConfigSetting()
+                    {
+                        Name = settingName,
+                        NodePath = settingPath
+                    });
+                }
+            }
+
             var basePath = "/configuration/applicationSettings";
             var settingsNode = document.SelectSingleNode(basePath);
 
