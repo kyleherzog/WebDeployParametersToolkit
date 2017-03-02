@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Generate parameters for appSettings
 - [ ] Open files in editor window after being generated.
 - [ ] Option to set default parameters to values from web.config or to tokenized values.
 - [ ] SetParameters.xml intellisense
