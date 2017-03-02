@@ -35,7 +35,7 @@ namespace WebDeployParametersToolkit.Utilities
                 {
                     results.AddRange(ReadApplicationSettings(document));
                 }
-                if (IncludeApplicationSettings)
+                if (IncludeCompilationDebug)
                 {
                     results.Add(new WebConfigSetting() { Name = "CompilationDebug", NodePath = "/configuration/system.web/compilation/@debug" });
                 }
