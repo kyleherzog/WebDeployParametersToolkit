@@ -10,6 +10,11 @@ namespace WebDeployParametersToolkit
 {
     public class OptionsPageGrid: DialogPage
     {
+        [Category("Parameter Generation Style")]
+        [DisplayName("Default Values")]
+        [Description("Tokenize will generate default values in the format of __PARAMETERNAME__. Clone will just copy the current value from the config file.")]
+        public ParametersGenerationStyle DefaultValueStyle { get; set; } = ParametersGenerationStyle.Clone;
+
         [Category("Parameters to Generate")]
         [DisplayName("Mail Settings")]
         [Description("Generate parameters based on the /configuration/system.net/mailSettings node of the Web.Config")]
@@ -36,7 +41,11 @@ namespace WebDeployParametersToolkit
         [DisplayName("Session State Settings")]
         [Description("Generate parameters for the settings found under the /configuration/system.web/sessionState node of the Web.Config")]
         public bool IncludeSessionStateSettings { get; set; } = true;
+    }
 
-
+    public enum ParametersGenerationStyle
+    {
+        Tokenize,
+        Clone
     }
 }

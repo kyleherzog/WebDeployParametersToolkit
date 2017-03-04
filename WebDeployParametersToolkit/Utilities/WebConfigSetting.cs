@@ -6,5 +6,7 @@
 
         public string NodePath { get; set; }
 
+        public string Value { get; set; }
+
     }
 }

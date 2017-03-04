@@ -11,7 +11,7 @@ namespace WebDeployParametersToolkit
         public const string Name = "Web Deploy Parameters Toolkit";
         public const string Description = @"Tools to make it easy to work with parameters in Web Deploy (MSDeploy).  This includes automatically generating a Parameters.xml file from a web.config file, generating SetParameters.xml file from Parameters.xml";
         public const string Language = "en-US";
-        public const string Version = "1.8";
+        public const string Version = "2.0";
         public const string Author = "Kyle Herzog";
         public const string Tags = "SetParameters, WebDeploy, MSDeploy, Parameters";
     }
