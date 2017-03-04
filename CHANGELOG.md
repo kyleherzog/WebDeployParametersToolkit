@@ -1,5 +1,4 @@
 # Roadmap
-- [ ] Generate parameters for appSettings
 - [ ] Open files in editor window after being generated.
 - [ ] Option to set default parameters to values from web.config or to tokenized values.
 - [ ] SetParameters.xml intellisense
@@ -57,5 +56,7 @@ on the official Visual Studio extension gallery.
 ## 1.7
 **2017-2-18**
 - [x] Skip generating parameters for StringCollections and any other application settings not serialized as strings
-- [ ] 
-- [ ] 
+
+## 1.8
+**2017-3-4**
+- [x] Generate parameters for appSettings
