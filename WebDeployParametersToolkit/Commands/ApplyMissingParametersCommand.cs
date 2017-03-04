@@ -135,21 +135,25 @@ namespace WebDeployParametersToolkit
                 {
                     ShowMessage("Parameters Already Updated", "No missing parameters found.");
                 }
-
-                var document = new XmlDocument();
-                document.Load(SolutionExplorerExtensions.SelectedItemPath);
-
-                var parametersNode = document.SelectSingleNode("/parameters");
-
-                foreach (var parameter in missingParameters)
+                else
                 {
-                    var node = document.CreateElement("setParameter");
-                    node.SetAttribute("name", parameter.Key);
-                    node.SetAttribute("value", parameter.Value);
-                    parametersNode.AppendChild(node);
+                    var document = new XmlDocument();
+                    document.Load(SolutionExplorerExtensions.SelectedItemPath);
+
+                    var parametersNode = document.SelectSingleNode("/parameters");
+
+                    foreach (var parameter in missingParameters)
+                    {
+                        var node = document.CreateElement("setParameter");
+                        node.SetAttribute("name", parameter.Key);
+                        node.SetAttribute("value", parameter.Value);
+                        parametersNode.AppendChild(node);
+                    }
+
+                    document.Save(fileName);
+                    VSPackage.DteInstance.Solution.FindProjectItem(fileName).Open().Visible = true;
                 }
 
-                document.Save(fileName);
             }
             catch (Exception ex)
             {

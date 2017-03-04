@@ -147,6 +147,7 @@ namespace WebDeployParametersToolkit
                 var project = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
                 project.ProjectItems.AddFromFile(targetName);
             }
+            VSPackage.DteInstance.Solution.FindProjectItem(targetName).Open().Visible = true;
         }
 
         private IEnumerable<WebConfigSetting> GetWebConfigSettings(string fileName)

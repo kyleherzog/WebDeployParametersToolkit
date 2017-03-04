@@ -146,6 +146,7 @@ namespace WebDeployParametersToolkit
                 var parent = VSPackage.DteInstance.Solution.FindProjectItem(sourceName);
                 var item = parent.ProjectItems.AddFromFile(targetName);
                 item.Properties.Item("ItemType").Value = "Parameterization";
+                item.Open().Visible = true;
             }
         }
 
