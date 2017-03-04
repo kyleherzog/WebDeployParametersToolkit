@@ -13,7 +13,7 @@ namespace WebDeployParametersToolkit.Tests
         public void ReadApplicationSettingsWithSimpleSettingsReturnsAll()
         {
             var simpleSettings = WebConfigSample.GetSimpleSettings();
-            var results = WebConfigSettingsReader.ReadApplicationSettings(simpleSettings.Document);
+            var results = WebConfigSettingsReader.ReadApplicationSettings(simpleSettings.Document, true, true);
             Assert.IsTrue(simpleSettings.ExpectedApplicationSettings.HasSameItems(results));
         }
 
@@ -21,7 +21,7 @@ namespace WebDeployParametersToolkit.Tests
         public void ReadApplicationSettingsWithEmptySettingsReturnsZeroResults()
         {
             var emptySettings = WebConfigSample.GetEmptySettings();
-            var results = WebConfigSettingsReader.ReadApplicationSettings(emptySettings.Document);
+            var results = WebConfigSettingsReader.ReadApplicationSettings(emptySettings.Document, true, true);
             Assert.IsTrue(emptySettings.ExpectedApplicationSettings.HasSameItems(results));
         }
     }

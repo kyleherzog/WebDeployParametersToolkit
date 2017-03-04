@@ -154,6 +154,7 @@ namespace WebDeployParametersToolkit
             var reader = new WebConfigSettingsReader(fileName);
 
             reader.IncludeApplicationSettings = VSPackage.OptionsPage.IncludeApplicationSettings;
+            reader.IncludeAppSettings = VSPackage.OptionsPage.IncludeAppSettings;
             reader.IncludeCompilationDebug = VSPackage.OptionsPage.IncludeCompilationDebug;
             reader.IncludeMailSettings = VSPackage.OptionsPage.IncludeMailSettings;
             reader.IncludeSessionStateSettings = VSPackage.OptionsPage.IncludeSessionStateSettings;
