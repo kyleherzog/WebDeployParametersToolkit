@@ -24,10 +24,12 @@ Select the web.config in solution explorer and right-click.
 
 ![Web Config Context Menu](art/WebConfigContextMenu.png)
 
-Then select *Generate Parameters.xml* to have a Parameters.xml file automatically generated from settings in the web.config file.
+Then select *Generate Parameters.xml* to have a Parameters.xml file automatically generated from settings in the web.config file. If a Parameters.xml file already exists in the project, missing parameters will be merged into the existing Parameters.xml file.
 
 To control which settings are automatically generated, adjust the settings in the Visual Studio Tools > Options dialog.
 ![Options Dialog](art/OptionsDialog.png)
+
+Starting in version 2.0, the options dialog also allows the user to select how the default values are generated in the Parametrs.xml file.  The default style is clone, which will read the value from the web.config file and copy it into the default value attribute.  The other option is tokenize.  Tokenize will generate the default value in the format of \_\_PROPERTYNAME__.
 
 ### Generate SetParameters[Environment].xml
 Select the Parameters.xml file in solution explorer and right-click.

@@ -1,5 +1,5 @@
 # Roadmap
-- [ ] Option to set default parameters to values from web.config or to tokenized values.
+- [ ] Add explicit menu option to update Parameters.xml
 - [ ] SetParameters.xml intellisense
 
 Features that have a checkmark are complete and available for
@@ -11,6 +11,51 @@ download in the
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
+## 2.0
+**2017-3-5**
+- [x] Option to set default parameters to values from web.config or to tokenized values.
+
+## 1.8
+**2017-3-4**
+- [x] Generate parameters for appSettings
+- [x] Open files in editor window after being generated/updated.
+
+## 1.7
+**2017-2-18**
+- [x] Skip generating parameters for StringCollections and any other application settings not serialized as strings
+
+## 1.6
+**2017-1-10**
+- [x] Visual Studio 2017 support
+
+## 1.5
+**2016-11-5**
+- [x] User configurable options for which parameters to generate
+
+## 1.4
+**2016-10-15**
+- [x] Generate parameter for compilation debug attribute
+- [x] Generate parameters for mailSettings
+- [x] Generate parameters for session state settings
+- [x] Bug fix for *Import Missing Parameters*
+
+## 1.3
+**2016-9-26**
+
+- [x] Configure project to copy SetParameters.xml files to drop location during build
+
+
+## 1.2
+**2016-09-07**
+
+- [x] Handling missing connectionStrings node in web.config file
+
+## 1.1
+
+**2016-09-02**
+
+- [x] Fix for *setParameters* element being wrongly named *parameters* instead when generating SetParameters.xml files
+
 ## 1.0
 
 **2016-08-31**
@@ -21,42 +66,9 @@ on the official Visual Studio extension gallery.
 - [x] Import missing parameters into SetParameters.xml file
 - [x] Nest SetParameters.xml files under Parameters.xml file 
 
-## 1.1
 
-**2016-09-02**
 
-- [x] Fix for *setParameters* element being wrongly named *parameters* instead when generating SetParameters.xml files
 
-## 1.2
-**2016-09-07**
 
-- [x] Handling missing connectionStrings node in web.config file
 
-## 1.3
-**2016-9-26**
 
-- [x] Configure project to copy SetParameters.xml files to drop location during build
-
-## 1.4
-**2016-10-15**
-- [x] Generate parameter for compilation debug attribute
-- [x] Generate parameters for mailSettings
-- [x] Generate parameters for session state settings
-- [x] Bug fix for *Import Missing Parameters*
-
-## 1.5
-**2016-11-5**
-- [x] User configurable options for which parameters to generate
-
-## 1.6
-**2017-1-10**
-- [x] Visual Studio 2017 support
-
-## 1.7
-**2017-2-18**
-- [x] Skip generating parameters for StringCollections and any other application settings not serialized as strings
-
-## 1.8
-**2017-3-4**
-- [x] Generate parameters for appSettings
-- [x] Open files in editor window after being generated/updated.
