@@ -159,6 +159,7 @@ namespace WebDeployParametersToolkit
             reader.IncludeCompilationDebug = VSPackage.OptionsPage.IncludeCompilationDebug;
             reader.IncludeMailSettings = VSPackage.OptionsPage.IncludeMailSettings;
             reader.IncludeSessionStateSettings = VSPackage.OptionsPage.IncludeSessionStateSettings;
+            reader.ValuesStyle = VSPackage.OptionsPage.DefaultValueStyle;
 
             return reader.Read();
         }
@@ -214,7 +215,7 @@ namespace WebDeployParametersToolkit
             {
                 writer.WriteStartElement("parameter");
                 writer.WriteAttributeString("name", setting.Name);
-                writer.WriteAttributeString("defaultvalue", $"__{setting.Name.ToUpper(CultureInfo.CurrentCulture)}__");
+                writer.WriteAttributeString("defaultvalue", setting.Value);
                 writer.WriteAttributeString("description", $"{setting.Name} description.");
                 writer.WriteAttributeString("tags", string.Empty);
 
