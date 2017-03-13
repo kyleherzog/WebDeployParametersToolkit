@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<parameters>
+	<parameter defaultvalue="FirstValue" description="Description of FirstParameter" name="FirstParameter">
+		<parameterentry kind="XmlFile" match="/configuration/appSettings/add[@key='FirstAppSetting']/@value" scope="\\web.config$" />
+	</parameter>
+	<parameter defaultvalue="SecondValue" description="Description of SecondParameter" name="SecondParameter">
+		<parameterentry kind="XmlFile" match="/configuration/appSettings/add[@key='SecondAppSetting']/@value" scope="\\web.config$" />
+	</parameter>
+</parameters>

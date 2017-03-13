@@ -126,10 +126,12 @@ namespace WebDeployParametersToolkit
             {
                 var fileName = SolutionExplorerExtensions.SelectedItemPath;
 
-                var allParameters = ParametersXmlReader.GetParameters(ParametersXmlItem.FileNames[0]);
-                var existingParameters = ParametersXmlReader.GetParameters(fileName);
+                var projectName = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.Name;
+                var reader = new ParametersXmlReader(ParametersXmlItem.FileNames[0], projectName);
+                var allParameters = reader.Read();
+                var existingParameters = SetParametersXmlReader.GetParameters(fileName);
 
-                var missingParameters = allParameters.Where(p => !existingParameters.Keys.Contains(p.Key)).ToList();
+                var missingParameters = allParameters.Where(p => !existingParameters.Keys.Contains(p.Name)).ToList();
 
                 if (missingParameters.Count == 0)
                 {
@@ -145,8 +147,8 @@ namespace WebDeployParametersToolkit
                     foreach (var parameter in missingParameters)
                     {
                         var node = document.CreateElement("setParameter");
-                        node.SetAttribute("name", parameter.Key);
-                        node.SetAttribute("value", parameter.Value);
+                        node.SetAttribute("name", parameter.Name);
+                        node.SetAttribute("value", parameter.DefaultValue);
                         parametersNode.AppendChild(node);
                     }
 

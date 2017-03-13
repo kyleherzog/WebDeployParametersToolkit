@@ -166,8 +166,20 @@ namespace WebDeployParametersToolkit
 
         private void UpdateParametersXml(IEnumerable<WebConfigSetting> settings, string fileName)
         {
-            var parameters = ParametersXmlReader.GetParameters(fileName);
-            var missingSettings = settings.Where(s => !parameters.Any(p => p.Key == s.Name)).ToList();
+            var projectName = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.Name;
+            var reader = new ParametersXmlReader(fileName, projectName);
+            var parameters = reader.Read();
+            var matches = new List<string>();
+            foreach (var parameter in parameters)
+            {
+                if (parameter.Entries != null)
+                {
+                    matches.AddRange(parameter.Entries.Select(e => e.Match));
+                }
+            }
+            var missingSettings = settings.Where(s => !matches.Any(p => p == s.NodePath)).ToList();
+
+            EnsureUniqueSettingsNames(missingSettings, parameters.Select(p => p.Name).ToList());
 
             var document = new XmlDocument();
             document.Load(fileName);
@@ -190,6 +202,30 @@ namespace WebDeployParametersToolkit
             parametersNode.AppendChild(missingParametersNodes);
 
             document.Save(fileName);
+        }
+
+        private void EnsureUniqueSettingsNames(List<WebConfigSetting> settings, ICollection<string> usedNames)
+        {
+            foreach (var setting in settings)
+            {
+                if (usedNames.Any(n => n == setting.Name))
+                {
+                    setting.Name = GetUniqueName(setting.Name, usedNames, 2);
+                }
+                usedNames.Add(setting.Name);
+            }
+        }
+
+        private string GetUniqueName(string baseName, IEnumerable<string> currentNames, int nextIndex)
+        {
+            if (currentNames.Any(n => n == $"{baseName}{nextIndex}"))
+            {
+                return GetUniqueName(baseName, currentNames, nextIndex + 1);
+            }
+            else
+            {
+                return $"{baseName}{nextIndex}";
+            }
         }
 
         private void CreateParametersXml(IEnumerable<WebConfigSetting> settings, string fileName)

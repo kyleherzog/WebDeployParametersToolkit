@@ -1,70 +1,130 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.XPath;
 
 namespace WebDeployParametersToolkit.Utilities
 {
-    public static class ParametersXmlReader
+    public class ParametersXmlReader
     {
-        public static IDictionary<string, string> GetParameters(string fileName)
+        public ParametersXmlReader(string fileName, string projectName)
         {
-            var results = new Dictionary<string, string>(GetAutoParameters(fileName));
+            Document = new XmlDocument();
+            Document.Load(fileName);
 
-            var document = new XmlDocument();
-            document.Load(fileName);
-            var nav = document.CreateNavigator();
+            ProjectName = projectName;
+
+            var folder = Path.GetDirectoryName(fileName);
+            var configFileName = Path.Combine(folder, "web.config");
+            if (File.Exists(configFileName))
+            {
+                AutoParametersDocument = new XmlDocument();
+                AutoParametersDocument.Load(configFileName);
+            }
+        }
+
+        public ParametersXmlReader(XmlDocument document, string projectName): this(document, projectName, null)
+        {
+        }
+
+        public ParametersXmlReader(string parametersXml, string projectName, string webConfigXml)
+        {
+            Document = new XmlDocument();
+            Document.LoadXml(parametersXml);
+
+            ProjectName = projectName;
+
+            if (!string.IsNullOrEmpty(webConfigXml))
+            {
+                AutoParametersDocument = new XmlDocument();
+                AutoParametersDocument.LoadXml(webConfigXml);
+            }
+        }
+
+        public ParametersXmlReader(XmlDocument document, string projectName, XmlDocument autoParametersDocument)
+        {
+            Document = document;
+            ProjectName = projectName;
+            AutoParametersDocument = autoParametersDocument;
+        }
+
+        public XmlDocument Document { get; }
+
+        public XmlDocument AutoParametersDocument { get; }
+
+        public string ProjectName { get; }
+
+        public IEnumerable<WebDeployParameter> Read()
+        {
+            var results = GetAutoParameters();
+
+            var nav = Document.CreateNavigator();
             nav.MoveToFirstChild();
             if (nav.Name != "parameters")
             {
-                throw new FileFormatException($"Error parsing {fileName}. Expecting element parameters.");
+                throw new FileFormatException($"Error parsing parameters xml. Expecting element 'parameters'.");
             }
-            nav.MoveToFirstChild();
-            do
+            if (nav.MoveToFirstChild())
             {
-                if (nav.NodeType == System.Xml.XPath.XPathNodeType.Element)
+                do
                 {
-                    if (nav.Name == "parameter")
+                    if (nav.NodeType == XPathNodeType.Element && nav.Name == "parameter")
                     {
-                        var name = nav.GetAttribute("name", string.Empty);
-                        var value = nav.GetAttribute("defaultvalue", string.Empty);
-                        results.Add(name, value);
-                    }
-                    else if (nav.Name == "setParameter")
-                    {                                               
-                        var name = nav.GetAttribute("name", string.Empty);
-                        var value = nav.GetAttribute("value", string.Empty);
-                        if (!results.ContainsKey(name)) //might already be there via GetAutoParameters
-                            results.Add(name, value);
-                    }
-                }
-            } while (nav.MoveToNext());
+                        var result = new WebDeployParameter()
+                        {
+                            Name = nav.GetAttribute("name", string.Empty),
+                            DefaultValue = nav.GetAttribute("defaultvalue", string.Empty),
+                            Description = nav.GetAttribute("description", string.Empty)
+                        };
+                        var entries = new List<WebDeployParameterEntry>();
+                        if (nav.MoveToFirstChild())
+                        {
+                            do
+                            {
+                                if (nav.NodeType == XPathNodeType.Element && nav.Name == "parameterentry")
+                                {
+                                    entries.Add(new WebDeployParameterEntry()
+                                    {
+                                        Kind = nav.GetAttribute("kind", string.Empty),
+                                        Match = nav.GetAttribute("match", string.Empty),
+                                        Scope = nav.GetAttribute("scope", string.Empty)
+                                    });
+                                }
+                            } while (nav.MoveToNext());
+                        }
+                        nav.MoveToParent();
 
+                        result.Entries = entries;
+                        results.Add(result);
+                    }
+                } while (nav.MoveToNext());
+            }
             return results;
         }
 
-        public static IDictionary<string, string> GetAutoParameters(string fileName)
+        public ICollection<WebDeployParameter> GetAutoParameters()
         {
-            var folder = Path.GetDirectoryName(fileName);
-            var configFileName = Path.Combine(folder, "web.config");
+            var results = GetConnectionStringParameters();            
 
-            var results = GetConnectionStringParameters(configFileName);
-
-            var project = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
-
-            results.Add("IIS Web Application Name", project.Name);
-            return results;
-        }
-
-        private static IDictionary<string, string> GetConnectionStringParameters(string configFileName)
-        {
-            var results = new Dictionary<string, string>();
-
-            if (File.Exists(configFileName))
+            results.Add(new WebDeployParameter()
             {
-                var document = new XmlDocument();
+                Name = "IIS Web Application Name",
+                DefaultValue = ProjectName
+            });
+            return results;
+        }
 
-                document.Load(configFileName);
-                var connectionStringsNode = document.SelectSingleNode("/configuration/connectionStrings");
+        private ICollection<WebDeployParameter> GetConnectionStringParameters()
+        {
+            var results = new List<WebDeployParameter>();
+
+            if (AutoParametersDocument != null)
+            {
+                var connectionStringsNode = AutoParametersDocument.SelectSingleNode("/configuration/connectionStrings");
                 if (connectionStringsNode != null)
                 {
                     var nav = connectionStringsNode.CreateNavigator();
@@ -75,7 +135,24 @@ namespace WebDeployParametersToolkit.Utilities
                         {
                             if (nav.Name == "add")
                             {
-                                results.Add($"{nav.GetAttribute("name", string.Empty)}-Web.config Connection String", nav.GetAttribute("connectionString", string.Empty));
+                                var baseName = nav.GetAttribute("name", string.Empty);
+                                var result = new WebDeployParameter()
+                                {
+                                    Name = $"{baseName}-Web.config Connection String",
+                                    DefaultValue = nav.GetAttribute("connectionString", string.Empty),
+                                    Description = $"{baseName} Connection String used in web.config by the application to access the database.",
+                                    Entries = new List<WebDeployParameterEntry>()
+                                    {
+                                        new WebDeployParameterEntry()
+                                        {
+                                            Kind = "XmlFile",
+                                            Match = $"/configuration/connectionStrings/add[@name='{baseName}']/@connectionString",
+                                            Scope = @"\\web.config$" //This isn't exactly right it will be an exact path.
+                                        }
+                                    }
+                                };
+
+                                results.Add(result);
                             }
                         } while (nav.MoveToNext());
                     }

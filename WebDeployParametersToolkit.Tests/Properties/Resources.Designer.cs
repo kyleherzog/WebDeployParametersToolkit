@@ -61,6 +61,16 @@ namespace WebDeployParametersToolkit.Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt; 
+        ///.
+        /// </summary>
+        internal static string BasicParameters {
+            get {
+                return ResourceManager.GetString("BasicParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;configuration&gt;
         ///  &lt;configSections&gt;
@@ -84,7 +94,7 @@ namespace WebDeployParametersToolkit.Tests.Properties {
         ///      &lt;section name=&quot;TestApp.Properties.Settings&quot; type=&quot;System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089&quot; requirePermission=&quot;false&quot; /&gt;
         ///    &lt;/sectionGroup&gt;
         ///  &lt;/configSections&gt;
-        ///  &lt;applicati [rest of string was truncated]&quot;;.
+        ///  &lt;appSettin [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SimpleSettings {
             get {

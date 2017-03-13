@@ -8,7 +8,7 @@ using WebDeployParametersToolkit.Utilities;
 
 namespace WebDeployParametersToolkit.Tests
 {
-    public static class WebConfigSettingsComparer
+    public static class WebConfigSettingsAsserts
     {
         public static void AssertHasSameItems(this IEnumerable<WebConfigSetting> source, WebConfigSetting target)
         {

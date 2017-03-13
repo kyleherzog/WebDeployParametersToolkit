@@ -150,7 +150,7 @@ namespace WebDeployParametersToolkit
             }
         }
 
-        private void CreateSetXml(IDictionary<string, string> parameters, string fileName)
+        private void CreateSetXml(IEnumerable<WebDeployParameter> parameters, string fileName)
         {
             XmlWriter writer = XmlWriter.Create(fileName, new XmlWriterSettings() { Indent = true });
 
@@ -161,8 +161,8 @@ namespace WebDeployParametersToolkit
                 foreach (var parameter in parameters)
                 {
                     writer.WriteStartElement("setParameter");
-                    writer.WriteAttributeString("name", parameter.Key);
-                    writer.WriteAttributeString("value", parameter.Value);
+                    writer.WriteAttributeString("name", parameter.Name);
+                    writer.WriteAttributeString("value", parameter.DefaultValue);
                     writer.WriteEndElement();
                 }
                 writer.WriteEndDocument();
@@ -173,12 +173,14 @@ namespace WebDeployParametersToolkit
             }
         }
 
-        private IDictionary<string, string> ParseParameters(string fileName)
+        private IEnumerable<WebDeployParameter> ParseParameters(string fileName)
         {
-            IDictionary<string, string> results = null;
+            IEnumerable<WebDeployParameter> results = null;
             try
             {
-                results = ParametersXmlReader.GetParameters(fileName);
+                var projectName = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.Name;
+                var reader = new ParametersXmlReader(fileName, projectName);
+                results = reader.Read();
             }
             catch (Exception ex)
             {
