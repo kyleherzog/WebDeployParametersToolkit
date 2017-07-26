@@ -35,6 +35,12 @@ namespace WebDeployParametersToolkit.Tests
             ExpectedSettings.Add(setting);
         }
 
+        public static WebConfigSample GetLocationSimpleSettings()
+        {
+            var result = new WebConfigSample(Properties.Resources.LocationSimpleSettings);
+            return result;
+        }
+
         public static WebConfigSample GetSimpleApplicationSettings(ParametersGenerationStyle style)
         {
             var result = new WebConfigSample(Properties.Resources.SimpleSettings);
