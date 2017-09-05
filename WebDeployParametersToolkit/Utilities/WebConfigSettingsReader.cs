@@ -151,7 +151,7 @@ namespace WebDeployParametersToolkit.Utilities
 
             if (includeAppSettings)
             {
-                var appSettingsPath = "/configuration/(location|.)/appSettings/add";
+                var appSettingsPath = "/configuration//appSettings/add";
                 var appSettingsNodes = document.SelectNodes(appSettingsPath);
                 for (int i = 0; i < appSettingsNodes.Count; i++)
                 {
@@ -182,7 +182,7 @@ namespace WebDeployParametersToolkit.Utilities
 
             if (includeApplicationSettings)
             {
-                var basePath = "/configuration/applicationSettings";
+                var basePath = "/configuration//applicationSettings";
                 var settingsNode = document.SelectSingleNode(basePath);
 
                 if (settingsNode != null)
