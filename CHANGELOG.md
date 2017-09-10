@@ -11,6 +11,10 @@ download in the
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
+## 2.1
+**2017-9-10**
+- [x] Added support for optional "location" element under "configuration" element.
+
 ## 2.0
 **2017-3-5**
 - [x] Option to set default parameters to values from web.config or to tokenized values.
