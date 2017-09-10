@@ -79,5 +79,6 @@
   </Rules>
   <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
     <Rule Id="S1172" Action="Error" />
+    <Rule Id="S1075" Action="Hidden" />
   </Rules>
 </RuleSet>

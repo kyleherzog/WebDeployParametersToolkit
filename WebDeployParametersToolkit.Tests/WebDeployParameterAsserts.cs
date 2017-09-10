@@ -16,7 +16,7 @@ namespace WebDeployParametersToolkit.Tests
             {
                 foreach (var sourceItem in source)
                 {
-                    var targetItem = target.Where(t => t.Name == sourceItem.Name).FirstOrDefault();
+                    var targetItem = target.FirstOrDefault(t => t.Name == sourceItem.Name);
                     if (targetItem == null)
                     {
                         throw new AssertFailedException($"A target item with a {nameof(WebDeployParameter.Name)} of {sourceItem.Name} could not be found.");
@@ -38,7 +38,7 @@ namespace WebDeployParametersToolkit.Tests
                     {
                         foreach (var sourceEntry in sourceItem.Entries)
                         {
-                            if (! targetItem.Entries.Any(e => e.Kind == sourceEntry.Kind && e.Match == sourceEntry.Match && e.Scope == sourceEntry.Scope))
+                            if (!targetItem.Entries.Any(e => e.Kind == sourceEntry.Kind && e.Match == sourceEntry.Match && e.Scope == sourceEntry.Scope))
                             {
                                 throw new AssertFailedException($"Unable to find matching entry on parameter named '{sourceItem.Name}' (Match = '{sourceEntry.Match}', Kind = '{sourceEntry.Kind}', Scope = '{sourceEntry.Scope}').");
                             }

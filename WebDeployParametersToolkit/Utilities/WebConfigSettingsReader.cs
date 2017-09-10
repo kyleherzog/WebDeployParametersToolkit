@@ -51,13 +51,11 @@ namespace WebDeployParametersToolkit.Utilities
                 {
                     results.AddRange(ReadSessionStateSettings(document, ValuesStyle));
                 }
-
             }
             return results;
         }
 
-
-        public static IEnumerable<WebConfigSetting> ReadSessionStateSettings(XmlDocument document, ParametersGenerationStyle style)
+        public static IEnumerable<WebConfigSetting> ReadSessionStateSettings(XmlNode document, ParametersGenerationStyle style)
         {
             var results = new List<WebConfigSetting>();
 
@@ -88,7 +86,7 @@ namespace WebDeployParametersToolkit.Utilities
             return results;
         }
 
-        public static IEnumerable<WebConfigSetting> ReadMailSettings(XmlDocument document, ParametersGenerationStyle style)
+        public static IEnumerable<WebConfigSetting> ReadMailSettings(XmlNode document, ParametersGenerationStyle style)
         {
             var results = new List<WebConfigSetting>();
 
@@ -119,7 +117,7 @@ namespace WebDeployParametersToolkit.Utilities
             return results;
         }
 
-        public static WebConfigSetting ReadCompilationDebugSettings(XmlDocument document, ParametersGenerationStyle style)
+        public static WebConfigSetting ReadCompilationDebugSettings(XmlNode document, ParametersGenerationStyle style)
         {
             var compilationNodePath = "/configuration/system.web/compilation";
             var result = new WebConfigSetting() { Name = "Compilation.Debug", NodePath = $"{compilationNodePath}/@debug" };
@@ -145,7 +143,7 @@ namespace WebDeployParametersToolkit.Utilities
             return ($"__{value.ToUpperInvariant()}__");
         }
 
-        public static IEnumerable<WebConfigSetting> ReadApplicationSettings(XmlDocument document, bool includeAppSettings, bool includeApplicationSettings, ParametersGenerationStyle style)
+        public static IEnumerable<WebConfigSetting> ReadApplicationSettings(XmlNode document, bool includeAppSettings, bool includeApplicationSettings, ParametersGenerationStyle style)
         {
             var results = new List<WebConfigSetting>();
 

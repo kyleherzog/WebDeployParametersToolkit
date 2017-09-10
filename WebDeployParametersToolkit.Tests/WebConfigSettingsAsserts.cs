@@ -21,12 +21,12 @@ namespace WebDeployParametersToolkit.Tests
             {
                 foreach (var sourceItem in source)
                 {
-                    var targetItem = target.Where(t => t.NodePath == sourceItem.NodePath).FirstOrDefault();
+                    var targetItem = target.FirstOrDefault(t => t.NodePath == sourceItem.NodePath);
                     if (targetItem == null)
                     {
                         throw new AssertFailedException($"A target item with a NodePath of {sourceItem.NodePath} could not be found.");
                     }
-                    else if(targetItem.Name != sourceItem.Name)
+                    else if (targetItem.Name != sourceItem.Name)
                     {
                         throw new AssertFailedException($"The {sourceItem.NodePath} item source name ({sourceItem.Name}) does not match target name ({targetItem.Name}).");
                     }
