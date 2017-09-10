@@ -68,6 +68,9 @@
     <None Include="Resources\EmptySettings.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Resources\LocationSimpleSettings.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\SimpleSettings.config">
       <SubType>Designer</SubType>
     </None>
@@ -76,6 +79,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

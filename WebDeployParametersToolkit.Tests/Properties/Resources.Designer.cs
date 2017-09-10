@@ -61,8 +61,13 @@ namespace WebDeployParametersToolkit.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt; 
-        ///.
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters&gt;
+        ///	&lt;parameter defaultvalue=&quot;FirstValue&quot; description=&quot;Description of FirstParameter&quot; name=&quot;FirstParameter&quot;&gt;
+        ///		&lt;parameterentry kind=&quot;XmlFile&quot; match=&quot;/configuration/appSettings/add[@key=&apos;FirstAppSetting&apos;]/@value&quot; scope=&quot;\\web.config$&quot; /&gt;
+        ///	&lt;/parameter&gt;
+        ///	&lt;parameter defaultvalue=&quot;SecondValue&quot; description=&quot;Description of SecondParameter&quot; name=&quot;SecondParameter&quot;&gt;
+        ///		&lt;parameterentry kind=&quot;XmlFile&quot; match=&quot;/configuration/appSettings/add[@key=&apos;SecondAppSetting&apos;]/@v [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasicParameters {
             get {
@@ -83,6 +88,22 @@ namespace WebDeployParametersToolkit.Tests.Properties {
         internal static string EmptySettings {
             get {
                 return ResourceManager.GetString("EmptySettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;configuration&gt;
+        ///  &lt;configSections&gt;
+        ///    &lt;sectionGroup name=&quot;applicationSettings&quot; type=&quot;System.Configuration.ApplicationSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089&quot;&gt;
+        ///      &lt;section name=&quot;TestApp.Properties.Settings&quot; type=&quot;System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089&quot; requirePermission=&quot;false&quot; /&gt;
+        ///    &lt;/sectionGroup&gt;
+        ///  &lt;/configSections&gt;
+        ///  &lt;location&gt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LocationSimpleSettings {
+            get {
+                return ResourceManager.GetString("LocationSimpleSettings", resourceCulture);
             }
         }
         

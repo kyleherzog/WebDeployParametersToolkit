@@ -113,5 +113,88 @@ namespace WebDeployParametersToolkit.Tests
             var results = WebConfigSettingsReader.ReadSessionStateSettings(emptySettings.Document, ParametersGenerationStyle.Tokenize);
             emptySettings.ExpectedSettings.AssertHasSameItems(results);
         }
+
+
+        #region LocationSimpleSettings
+        [TestMethod]
+        public void ReadApplicationSettingsWithLocationSimpleSettingsReturnsAllTokenized()
+        {
+            var style = ParametersGenerationStyle.Tokenize;
+            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(style);
+            var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
+            var results = WebConfigSettingsReader.ReadApplicationSettings(locationSimpleSettings.Document, true, true, style);
+            simpleSettings.ExpectedSettings.AssertHasSameItems(results);
+        }
+
+        [TestMethod]
+        public void ReadApplicationSettingsWithLocationSimpleSettingsReturnsAllWithValues()
+        {
+            var style = ParametersGenerationStyle.Clone;
+            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(style);
+            var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
+            var results = WebConfigSettingsReader.ReadApplicationSettings(locationSimpleSettings.Document, true, true, style);
+            simpleSettings.ExpectedSettings.AssertHasSameItems(results);
+        }
+
+        [TestMethod]
+        public void ReadCompilationDebugSettingsWithLocationSimpleSettingsReturnsTokenized()
+        {
+            var style = ParametersGenerationStyle.Tokenize;
+            var simpleSettings = WebConfigSample.GetSimpleCompilationDebugSettings(style);
+            var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
+            var results = WebConfigSettingsReader.ReadCompilationDebugSettings(locationSimpleSettings.Document, style);
+            simpleSettings.ExpectedSettings.AssertHasSameItems(results);
+        }
+
+        [TestMethod]
+        public void ReadCompilationDebugSettingsWithLocationSimpleSettingsReturnsWithValues()
+        {
+            var style = ParametersGenerationStyle.Clone;
+            var simpleSettings = WebConfigSample.GetSimpleCompilationDebugSettings(style);
+            var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
+            var results = WebConfigSettingsReader.ReadCompilationDebugSettings(locationSimpleSettings.Document, style);
+            simpleSettings.ExpectedSettings.AssertHasSameItems(results);
+        }
+
+        [TestMethod]
+        public void ReadMailSettingsWithLocationSimpleSettingsReturnsAllTokenized()
+        {
+            var style = ParametersGenerationStyle.Tokenize;
+            var simpleSettings = WebConfigSample.GetSimpleMailSettings(style);
+            var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
+            var results = WebConfigSettingsReader.ReadMailSettings(locationSimpleSettings.Document, style);
+            simpleSettings.ExpectedSettings.AssertHasSameItems(results);
+        }
+
+        [TestMethod]
+        public void ReadMailSettingsWithLocationSimpleSettingsReturnsAllWithValues()
+        {
+            var style = ParametersGenerationStyle.Clone;
+            var simpleSettings = WebConfigSample.GetSimpleMailSettings(style);
+            var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
+            var results = WebConfigSettingsReader.ReadMailSettings(locationSimpleSettings.Document, style);
+            simpleSettings.ExpectedSettings.AssertHasSameItems(results);
+        }
+
+        [TestMethod]
+        public void ReadSessionStateSettingsWithLocationSimpleSettingsReturnsAllTokenized()
+        {
+            var style = ParametersGenerationStyle.Tokenize;
+            var simpleSettings = WebConfigSample.GetSimpleSessionStateSettings(style);
+            var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
+            var results = WebConfigSettingsReader.ReadSessionStateSettings(locationSimpleSettings.Document, style);
+            simpleSettings.ExpectedSettings.AssertHasSameItems(results);
+        }
+
+        [TestMethod]
+        public void ReadSessionStateSettingsWithLocationSimpleSettingsReturnsAllWithValues()
+        {
+            var style = ParametersGenerationStyle.Clone;
+            var simpleSettings = WebConfigSample.GetSimpleSessionStateSettings(style);
+            var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
+            var results = WebConfigSettingsReader.ReadSessionStateSettings(locationSimpleSettings.Document, style);
+            simpleSettings.ExpectedSettings.AssertHasSameItems(results);
+        }
+        #endregion
     }
 }
