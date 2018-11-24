@@ -15,18 +15,18 @@ namespace WebDeployParametersToolkit
             EnvironmentName.Focus();
         }
 
-        private void CreateButton_Click(object sender, RoutedEventArgs e)
-        {
-            DialogResult = true;
-            Close();
-        }
-
         public string Input
         {
             get
             {
                 return $"SetParameters{EnvironmentName.Text.TrimEnd()}.xml";
             }
+        }
+
+        private void CreateButton_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
         }
 
         private void EnvironmentName_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -38,6 +38,7 @@ namespace WebDeployParametersToolkit
                 EnvironmentName.SelectionStart = cleanText.Length;
                 EnvironmentName.SelectionLength = 0;
             }
+
             FileName.Content = $"SetParameters{EnvironmentName.Text}.xml";
         }
     }

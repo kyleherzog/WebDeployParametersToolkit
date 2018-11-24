@@ -1,14 +1,15 @@
-﻿using Microsoft.VisualStudio.Shell;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using Microsoft.VisualStudio.Shell;
 
 namespace WebDeployParametersToolkit
 {
-    public class OptionsPageGrid: DialogPage
+    public enum ParametersGenerationStyle
+    {
+        Tokenize,
+        Clone
+    }
+
+    public class OptionsPageGrid : DialogPage
     {
         [Category("Parameter Generation Style")]
         [DisplayName("Default Values")]
@@ -16,9 +17,14 @@ namespace WebDeployParametersToolkit
         public ParametersGenerationStyle DefaultValueStyle { get; set; } = ParametersGenerationStyle.Clone;
 
         [Category("Parameters to Generate")]
-        [DisplayName("Mail Settings")]
-        [Description("Generate parameters based on the /configuration/system.net/mailSettings node of the Web.Config")]
-        public bool IncludeMailSettings { get; set; } = true;
+        [DisplayName("Application Settings")]
+        [Description("Generate parameters for the settings found under the /configuration/applicationSettings node of the Web.Config")]
+        public bool IncludeApplicationSettings { get; set; } = true;
+
+        [Category("Parameters to Generate")]
+        [DisplayName("App Settings")]
+        [Description("Generate parameters for the settings found under the /configuration/appSettings node of the Web.Config")]
+        public bool IncludeAppSettings { get; set; } = true;
 
         [Category("Parameters to Generate")]
         [DisplayName("Compilation Debug")]
@@ -26,26 +32,13 @@ namespace WebDeployParametersToolkit
         public bool IncludeCompilationDebug { get; set; } = true;
 
         [Category("Parameters to Generate")]
-        [DisplayName("Application Settings")]
-        [Description("Generate parameters for the settings found under the /configuration/applicationSettings node of the Web.Config")]
-        public bool IncludeApplicationSettings { get; set; } = true;
-
-
-        [Category("Parameters to Generate")]
-        [DisplayName("App Settings")]
-        [Description("Generate parameters for the settings found under the /configuration/appSettings node of the Web.Config")]
-        public bool IncludeAppSettings { get; set; } = true;
-
+        [DisplayName("Mail Settings")]
+        [Description("Generate parameters based on the /configuration/system.net/mailSettings node of the Web.Config")]
+        public bool IncludeMailSettings { get; set; } = true;
 
         [Category("Parameters to Generate")]
         [DisplayName("Session State Settings")]
         [Description("Generate parameters for the settings found under the /configuration/system.web/sessionState node of the Web.Config")]
         public bool IncludeSessionStateSettings { get; set; } = true;
-    }
-
-    public enum ParametersGenerationStyle
-    {
-        Tokenize,
-        Clone
     }
 }

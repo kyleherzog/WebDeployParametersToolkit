@@ -1,9 +1,9 @@
-﻿using EnvDTE;
+﻿using System;
+using System.Runtime.InteropServices;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using System;
-using System.Runtime.InteropServices;
 
 namespace WebDeployParametersToolkit
 {
@@ -48,11 +48,11 @@ namespace WebDeployParametersToolkit
 
         public static DTE2 DteInstance { get; set; }
 
-        public static SVsSolution Solution { get; set; }
+        public static OptionsPageGrid OptionsPage { get; set; }
 
         public static IVsUIShell Shell { get; set; }
 
-        public static OptionsPageGrid OptionsPage { get; set; }
+        public static SVsSolution Solution { get; set; }
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
@@ -77,6 +77,5 @@ namespace WebDeployParametersToolkit
             GenerateParametersCommand.Initialize(this);
             AddParameterizationTargetCommand.Initialize(this);
         }
-
     }
 }

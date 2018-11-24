@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebDeployParametersToolkit.Utilities;
-using WebDeployParametersToolkit.Tests;
 
 namespace WebDeployParametersToolkit.Tests
 {
@@ -38,7 +36,7 @@ namespace WebDeployParametersToolkit.Tests
             parameters.AssertHasSameItems(expected);
         }
 
-        private ICollection<WebDeployParameter>GetAutoParameters()
+        private ICollection<WebDeployParameter> GetAutoParameters()
         {
             var results = new List<WebDeployParameter>();
 
@@ -117,11 +115,11 @@ namespace WebDeployParametersToolkit.Tests
             });
 
             if (includeAutoConnectionParameters)
+            {
                 results.AddRange(GetAutoParameters());
+            }
 
             return results;
         }
-
-
     }
 }

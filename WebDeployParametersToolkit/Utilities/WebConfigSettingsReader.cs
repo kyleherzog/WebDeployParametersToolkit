@@ -11,7 +11,7 @@ namespace WebDeployParametersToolkit.Utilities
             FileName = fileName;
         }
 
-        public ParametersGenerationStyle ValuesStyle { get; set; }
+        public string FileName { get; }
 
         public bool IncludeApplicationSettings { get; set; } = true;
 
@@ -23,125 +23,7 @@ namespace WebDeployParametersToolkit.Utilities
 
         public bool IncludeSessionStateSettings { get; set; } = true;
 
-        public string FileName { get; }
-
-        public IEnumerable<WebConfigSetting> Read()
-        {
-            var results = new List<WebConfigSetting>();
-
-            if (File.Exists(FileName))
-            {
-                var document = new XmlDocument();
-                document.Load(FileName);
-
-                results.AddRange(ReadApplicationSettings(document, IncludeAppSettings, IncludeApplicationSettings, ValuesStyle));
-                if (IncludeCompilationDebug)
-                {
-                    var setting = ReadCompilationDebugSettings(document, ValuesStyle);
-                    if (setting != null)
-                    {
-                        results.Add(setting);
-                    }
-                }
-                if (IncludeMailSettings)
-                {
-                    results.AddRange(ReadMailSettings(document, ValuesStyle));
-                }
-                if (IncludeSessionStateSettings)
-                {
-                    results.AddRange(ReadSessionStateSettings(document, ValuesStyle));
-                }
-            }
-            return results;
-        }
-
-        public static IEnumerable<WebConfigSetting> ReadSessionStateSettings(XmlNode document, ParametersGenerationStyle style)
-        {
-            var results = new List<WebConfigSetting>();
-
-            var sessionStatePath = "/configuration/system.web/sessionState";
-
-            var modeValue = document.SelectSingleNode($"{sessionStatePath}")?.Attributes["mode"]?.Value;
-            if (!string.IsNullOrEmpty(modeValue))
-            {
-                var setting = new WebConfigSetting() { Name = "SessionState.Mode", NodePath = $"{sessionStatePath}/@mode", Value = modeValue };
-                if (style == ParametersGenerationStyle.Tokenize)
-                {
-                    setting.Value = TokenizeValue(setting.Name);
-                }
-                results.Add(setting);
-            }
-
-            var connectionStringValue = document.SelectSingleNode($"{sessionStatePath}")?.Attributes["sqlConnectionString"]?.Value;
-            if (!string.IsNullOrEmpty(connectionStringValue))
-            {
-                var setting = new WebConfigSetting() { Name = "SessionState.ConnectionString", NodePath = $"{sessionStatePath}/@sqlConnectionString", Value = connectionStringValue };
-                if (style == ParametersGenerationStyle.Tokenize)
-                {
-                    setting.Value = TokenizeValue(setting.Name);
-                }
-                results.Add(setting);
-            }
-
-            return results;
-        }
-
-        public static IEnumerable<WebConfigSetting> ReadMailSettings(XmlNode document, ParametersGenerationStyle style)
-        {
-            var results = new List<WebConfigSetting>();
-
-            var smtpPath = "/configuration/system.net/mailSettings/smtp";
-
-            var hostValue = document.SelectSingleNode($"{smtpPath}/network")?.Attributes["host"]?.Value;
-            if (!string.IsNullOrEmpty(hostValue))
-            {
-                var setting = new WebConfigSetting() { Name = "Smtp.NetworkHost", NodePath = $"{smtpPath}/network/@host", Value = hostValue };
-                if (style == ParametersGenerationStyle.Tokenize)
-                {
-                    setting.Value = TokenizeValue(setting.Name);
-                }
-                results.Add(setting);
-            }
-
-            var deliveryMethodValue = document.SelectSingleNode($"{smtpPath}")?.Attributes["deliveryMethod"]?.Value;
-            if (!string.IsNullOrEmpty(deliveryMethodValue))
-            {
-                var setting = new WebConfigSetting() { Name = "Smtp.DeliveryMethod", NodePath = $"{smtpPath}/@deliveryMethod", Value = deliveryMethodValue };
-                if (style == ParametersGenerationStyle.Tokenize)
-                {
-                    setting.Value = TokenizeValue(setting.Name);
-                }
-                results.Add(setting);
-            }
-
-            return results;
-        }
-
-        public static WebConfigSetting ReadCompilationDebugSettings(XmlNode document, ParametersGenerationStyle style)
-        {
-            var compilationNodePath = "/configuration/system.web/compilation";
-            var result = new WebConfigSetting() { Name = "Compilation.Debug", NodePath = $"{compilationNodePath}/@debug" };
-            result.Value = document.SelectSingleNode(compilationNodePath)?.Attributes["debug"]?.Value;
-
-            if (string.IsNullOrEmpty(result.Value))
-            {
-                return null;
-            }
-            else
-            {
-                if (style == ParametersGenerationStyle.Tokenize)
-                {
-                    result.Value = TokenizeValue(result.Name);
-                }
-
-                return result;
-            }
-        }
-
-        private static string TokenizeValue(string value)
-        {
-            return ($"__{value.ToUpperInvariant()}__");
-        }
+        public ParametersGenerationStyle ValuesStyle { get; set; }
 
         public static IEnumerable<WebConfigSetting> ReadApplicationSettings(XmlNode document, bool includeAppSettings, bool includeApplicationSettings, ParametersGenerationStyle style)
         {
@@ -151,7 +33,7 @@ namespace WebDeployParametersToolkit.Utilities
             {
                 var appSettingsPath = "/configuration//appSettings/add";
                 var appSettingsNodes = document.SelectNodes(appSettingsPath);
-                for (int i = 0; i < appSettingsNodes.Count; i++)
+                for (var i = 0; i < appSettingsNodes.Count; i++)
                 {
                     var node = appSettingsNodes[i];
                     var keyAttribute = node.Attributes["key"];
@@ -160,11 +42,11 @@ namespace WebDeployParametersToolkit.Utilities
                     {
                         var settingName = keyAttribute.Value;
                         var settingPath = $"{appSettingsPath}[@key='{settingName}']/@value";
-                        var setting = (new WebConfigSetting()
+                        var setting = new WebConfigSetting()
                         {
                             Name = settingName,
                             NodePath = settingPath
-                        });
+                        };
                         if (style == ParametersGenerationStyle.Tokenize)
                         {
                             setting.Value = TokenizeValue(setting.Name);
@@ -173,6 +55,7 @@ namespace WebDeployParametersToolkit.Utilities
                         {
                             setting.Value = node.Attributes["value"]?.Value;
                         }
+
                         results.Add(setting);
                     }
                 }
@@ -228,14 +111,147 @@ namespace WebDeployParametersToolkit.Utilities
 
                                         results.Add(setting);
                                     }
-                                } while (nav.MoveToNext());
+                                }
+                                while (nav.MoveToNext());
                             }
+
                             nav.MoveToParent();
-                        } while (nav.MoveToNext());
+                        }
+                        while (nav.MoveToNext());
                     }
                 }
             }
+
             return results;
+        }
+
+        public static WebConfigSetting ReadCompilationDebugSettings(XmlNode document, ParametersGenerationStyle style)
+        {
+            var compilationNodePath = "/configuration/system.web/compilation";
+            var result = new WebConfigSetting
+            {
+                Name = "Compilation.Debug",
+                NodePath = $"{compilationNodePath}/@debug",
+                Value = document.SelectSingleNode(compilationNodePath)?.Attributes["debug"]?.Value
+            };
+
+            if (string.IsNullOrEmpty(result.Value))
+            {
+                return null;
+            }
+            else
+            {
+                if (style == ParametersGenerationStyle.Tokenize)
+                {
+                    result.Value = TokenizeValue(result.Name);
+                }
+
+                return result;
+            }
+        }
+
+        public static IEnumerable<WebConfigSetting> ReadMailSettings(XmlNode document, ParametersGenerationStyle style)
+        {
+            var results = new List<WebConfigSetting>();
+
+            var smtpPath = "/configuration/system.net/mailSettings/smtp";
+
+            var hostValue = document.SelectSingleNode($"{smtpPath}/network")?.Attributes["host"]?.Value;
+            if (!string.IsNullOrEmpty(hostValue))
+            {
+                var setting = new WebConfigSetting() { Name = "Smtp.NetworkHost", NodePath = $"{smtpPath}/network/@host", Value = hostValue };
+                if (style == ParametersGenerationStyle.Tokenize)
+                {
+                    setting.Value = TokenizeValue(setting.Name);
+                }
+
+                results.Add(setting);
+            }
+
+            var deliveryMethodValue = document.SelectSingleNode($"{smtpPath}")?.Attributes["deliveryMethod"]?.Value;
+            if (!string.IsNullOrEmpty(deliveryMethodValue))
+            {
+                var setting = new WebConfigSetting() { Name = "Smtp.DeliveryMethod", NodePath = $"{smtpPath}/@deliveryMethod", Value = deliveryMethodValue };
+                if (style == ParametersGenerationStyle.Tokenize)
+                {
+                    setting.Value = TokenizeValue(setting.Name);
+                }
+
+                results.Add(setting);
+            }
+
+            return results;
+        }
+
+        public static IEnumerable<WebConfigSetting> ReadSessionStateSettings(XmlNode document, ParametersGenerationStyle style)
+        {
+            var results = new List<WebConfigSetting>();
+
+            var sessionStatePath = "/configuration/system.web/sessionState";
+
+            var modeValue = document.SelectSingleNode($"{sessionStatePath}")?.Attributes["mode"]?.Value;
+            if (!string.IsNullOrEmpty(modeValue))
+            {
+                var setting = new WebConfigSetting() { Name = "SessionState.Mode", NodePath = $"{sessionStatePath}/@mode", Value = modeValue };
+                if (style == ParametersGenerationStyle.Tokenize)
+                {
+                    setting.Value = TokenizeValue(setting.Name);
+                }
+
+                results.Add(setting);
+            }
+
+            var connectionStringValue = document.SelectSingleNode($"{sessionStatePath}")?.Attributes["sqlConnectionString"]?.Value;
+            if (!string.IsNullOrEmpty(connectionStringValue))
+            {
+                var setting = new WebConfigSetting() { Name = "SessionState.ConnectionString", NodePath = $"{sessionStatePath}/@sqlConnectionString", Value = connectionStringValue };
+                if (style == ParametersGenerationStyle.Tokenize)
+                {
+                    setting.Value = TokenizeValue(setting.Name);
+                }
+
+                results.Add(setting);
+            }
+
+            return results;
+        }
+
+        public IEnumerable<WebConfigSetting> Read()
+        {
+            var results = new List<WebConfigSetting>();
+
+            if (File.Exists(FileName))
+            {
+                var document = new XmlDocument { XmlResolver = null };
+                document.Load(FileName);
+
+                results.AddRange(ReadApplicationSettings(document, IncludeAppSettings, IncludeApplicationSettings, ValuesStyle));
+                if (IncludeCompilationDebug)
+                {
+                    var setting = ReadCompilationDebugSettings(document, ValuesStyle);
+                    if (setting != null)
+                    {
+                        results.Add(setting);
+                    }
+                }
+
+                if (IncludeMailSettings)
+                {
+                    results.AddRange(ReadMailSettings(document, ValuesStyle));
+                }
+
+                if (IncludeSessionStateSettings)
+                {
+                    results.AddRange(ReadSessionStateSettings(document, ValuesStyle));
+                }
+            }
+
+            return results;
+        }
+
+        private static string TokenizeValue(string value)
+        {
+            return $"__{value.ToUpperInvariant()}__";
         }
     }
 }

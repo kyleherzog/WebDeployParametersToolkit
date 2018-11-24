@@ -45,7 +45,6 @@ namespace WebDeployParametersToolkit.Tests
                         }
                     }
                 }
-                return;
             }
             else
             {

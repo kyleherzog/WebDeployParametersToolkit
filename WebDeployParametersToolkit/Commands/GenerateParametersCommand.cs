@@ -1,13 +1,12 @@
-﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using WebDeployParametersToolkit.Extensions;
 using WebDeployParametersToolkit.Utilities;
 
@@ -42,38 +41,20 @@ namespace WebDeployParametersToolkit
         {
             if (package == null)
             {
-                throw new ArgumentNullException("package");
+                throw new ArgumentNullException(nameof(package));
             }
 
             this.package = package;
 
-            OleMenuCommandService commandService = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
-                var menuItem = new OleMenuCommand(this.MenuItemCallback, menuCommandID);
-                menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus; ;
+                var menuItem = new OleMenuCommand(MenuItemCallback, menuCommandID);
+                menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus;
+
                 commandService.AddCommand(menuItem);
             }
-        }
-
-        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
-        {
-            var menuItem = (OleMenuCommand)sender;
-            menuItem.Visible = false;
-
-            SolutionExplorerExtensions.LoadSelectedItemPath();
-
-            if (CanGenerateParameters())
-            {
-                menuItem.Visible = true;
-            }
-        }
-
-        private bool CanGenerateParameters()
-        {
-            var filename = Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath);
-            return (filename.Equals("web.config", StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -92,7 +73,7 @@ namespace WebDeployParametersToolkit
         {
             get
             {
-                return this.package;
+                return package;
             }
         }
 
@@ -103,6 +84,109 @@ namespace WebDeployParametersToolkit
         public static void Initialize(Package package)
         {
             Instance = new GenerateParametersCommand(package);
+        }
+
+        private bool CanGenerateParameters()
+        {
+            var filename = Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath);
+            return filename.Equals("web.config", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void CreateParametersXml(IEnumerable<WebConfigSetting> settings, string fileName)
+        {
+            var writer = XmlWriter.Create(fileName, new XmlWriterSettings() { Indent = true });
+
+            try
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("parameters");
+                WriteParameters(settings, writer);
+                writer.WriteEndDocument();
+            }
+            finally
+            {
+                writer.Close();
+            }
+        }
+
+        private void EnsureUniqueSettingsNames(List<WebConfigSetting> settings, ICollection<string> usedNames)
+        {
+            foreach (var setting in settings)
+            {
+                if (usedNames.Any(n => n == setting.Name))
+                {
+                    setting.Name = GetUniqueName(setting.Name, usedNames, 2);
+                }
+
+                usedNames.Add(setting.Name);
+            }
+        }
+
+        private void GenerateFile(string fileName)
+        {
+            var settings = GetWebConfigSettings(fileName);
+
+            var folder = Path.GetDirectoryName(fileName);
+            var targetName = Path.Combine(folder, "Parameters.xml");
+            if (File.Exists(targetName))
+            {
+                if (VsShellUtilities.PromptYesNo(
+                        "Merge missing settings into existing Parameters.xml file?",
+                        "Update File?",
+                        OLEMSGICON.OLEMSGICON_QUERY,
+                        VSPackage.Shell))
+                {
+                    UpdateParametersXml(settings, targetName);
+                }
+            }
+            else
+            {
+                CreateParametersXml(settings, targetName);
+                var project = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
+                project.ProjectItems.AddFromFile(targetName);
+            }
+
+            VSPackage.DteInstance.Solution.FindProjectItem(targetName).Open().Visible = true;
+        }
+
+        private string GetUniqueName(string baseName, IEnumerable<string> currentNames, int nextIndex)
+        {
+            if (currentNames.Any(n => n == $"{baseName}{nextIndex}"))
+            {
+                return GetUniqueName(baseName, currentNames, nextIndex + 1);
+            }
+            else
+            {
+                return $"{baseName}{nextIndex}";
+            }
+        }
+
+        private IEnumerable<WebConfigSetting> GetWebConfigSettings(string fileName)
+        {
+            var reader = new WebConfigSettingsReader(fileName)
+            {
+                IncludeApplicationSettings = VSPackage.OptionsPage.IncludeApplicationSettings,
+                IncludeAppSettings = VSPackage.OptionsPage.IncludeAppSettings,
+                IncludeCompilationDebug = VSPackage.OptionsPage.IncludeCompilationDebug,
+                IncludeMailSettings = VSPackage.OptionsPage.IncludeMailSettings,
+                IncludeSessionStateSettings = VSPackage.OptionsPage.IncludeSessionStateSettings,
+                ValuesStyle = VSPackage.OptionsPage.DefaultValueStyle
+            };
+
+            return reader.Read();
+        }
+
+        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
+        {
+            var menuItem = (OleMenuCommand)sender;
+            menuItem.Visible = false;
+
+            SolutionExplorerExtensions.LoadSelectedItemPath();
+
+            if (CanGenerateParameters())
+            {
+                menuItem.Visible = true;
+            }
         }
 
         /// <summary>
@@ -125,43 +209,15 @@ namespace WebDeployParametersToolkit
             }
         }
 
-        private void GenerateFile(string fileName)
+        private void ShowMessage(string title, string message)
         {
-            var settings = GetWebConfigSettings(fileName);
-
-            var folder = Path.GetDirectoryName(fileName);
-            var targetName = Path.Combine(folder, "Parameters.xml");
-            if (File.Exists(targetName))
-            {
-                if (VsShellUtilities.PromptYesNo("Merge missing settings into existing Parameters.xml file?",
-                        "Update File?",
-                        OLEMSGICON.OLEMSGICON_QUERY,
-                        VSPackage.Shell))
-                {
-                    UpdateParametersXml(settings, targetName);
-                }
-            }
-            else
-            {
-                CreateParametersXml(settings, targetName);
-                var project = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
-                project.ProjectItems.AddFromFile(targetName);
-            }
-            VSPackage.DteInstance.Solution.FindProjectItem(targetName).Open().Visible = true;
-        }
-
-        private IEnumerable<WebConfigSetting> GetWebConfigSettings(string fileName)
-        {
-            var reader = new WebConfigSettingsReader(fileName);
-
-            reader.IncludeApplicationSettings = VSPackage.OptionsPage.IncludeApplicationSettings;
-            reader.IncludeAppSettings = VSPackage.OptionsPage.IncludeAppSettings;
-            reader.IncludeCompilationDebug = VSPackage.OptionsPage.IncludeCompilationDebug;
-            reader.IncludeMailSettings = VSPackage.OptionsPage.IncludeMailSettings;
-            reader.IncludeSessionStateSettings = VSPackage.OptionsPage.IncludeSessionStateSettings;
-            reader.ValuesStyle = VSPackage.OptionsPage.DefaultValueStyle;
-
-            return reader.Read();
+            VsShellUtilities.ShowMessageBox(
+                ServiceProvider,
+                message,
+                title,
+                OLEMSGICON.OLEMSGICON_INFO,
+                OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
 
         private void UpdateParametersXml(IEnumerable<WebConfigSetting> settings, string fileName)
@@ -177,11 +233,12 @@ namespace WebDeployParametersToolkit
                     matches.AddRange(parameter.Entries.Select(e => e.Match));
                 }
             }
+
             var missingSettings = settings.Where(s => !matches.Any(p => p == s.NodePath)).ToList();
 
             EnsureUniqueSettingsNames(missingSettings, parameters.Select(p => p.Name).ToList());
 
-            var document = new XmlDocument();
+            var document = new XmlDocument { XmlResolver = null };
             document.Load(fileName);
 
             var builder = new StringBuilder();
@@ -204,47 +261,6 @@ namespace WebDeployParametersToolkit
             document.Save(fileName);
         }
 
-        private void EnsureUniqueSettingsNames(List<WebConfigSetting> settings, ICollection<string> usedNames)
-        {
-            foreach (var setting in settings)
-            {
-                if (usedNames.Any(n => n == setting.Name))
-                {
-                    setting.Name = GetUniqueName(setting.Name, usedNames, 2);
-                }
-                usedNames.Add(setting.Name);
-            }
-        }
-
-        private string GetUniqueName(string baseName, IEnumerable<string> currentNames, int nextIndex)
-        {
-            if (currentNames.Any(n => n == $"{baseName}{nextIndex}"))
-            {
-                return GetUniqueName(baseName, currentNames, nextIndex + 1);
-            }
-            else
-            {
-                return $"{baseName}{nextIndex}";
-            }
-        }
-
-        private void CreateParametersXml(IEnumerable<WebConfigSetting> settings, string fileName)
-        {
-            XmlWriter writer = XmlWriter.Create(fileName, new XmlWriterSettings() { Indent = true });
-
-            try
-            {
-                writer.WriteStartDocument();
-                writer.WriteStartElement("parameters");
-                WriteParameters(settings, writer);
-                writer.WriteEndDocument();
-            }
-            finally
-            {
-                writer.Close();
-            }
-        }
-
         private void WriteParameters(IEnumerable<WebConfigSetting> settings, XmlWriter writer)
         {
             foreach (var setting in settings)
@@ -263,17 +279,6 @@ namespace WebDeployParametersToolkit
 
                 writer.WriteEndElement();
             }
-        }
-
-        private void ShowMessage(string title, string message)
-        {
-            VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
     }
 }

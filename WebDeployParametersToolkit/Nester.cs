@@ -1,8 +1,8 @@
-﻿using EnvDTE;
+﻿using System;
+using System.IO;
+using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
-using System;
-using System.IO;
 
 namespace WebDeployParametersToolkit
 {
@@ -20,6 +20,12 @@ namespace WebDeployParametersToolkit
             }
         }
 
+        public static void ApplyNesting(string itemPath)
+        {
+            var item = VSPackage.DteInstance.Solution.FindProjectItem(itemPath);
+            ApplyNesting(item);
+        }
+
         private static void ItemRenamed(ProjectItem item, string oldName)
         {
             ItemAddedRenamed(item);
@@ -31,15 +37,15 @@ namespace WebDeployParametersToolkit
         }
 
 #pragma warning disable S1172 // Unused method parameters should be removed
+
         private static void ItemAddedRenamed(ProjectItem item)
 #pragma warning restore S1172 // Unused method parameters should be removed
         {
             //TODO fix: this causes VS to throw a 'System.AccessViolationException' if it needs to initialize the project.
             //          Just commenting feature out for now.
 
-            
 #pragma warning disable S125 // Sections of code should not be "commented out"
-//if (item.ContainingProject != null)
+            //if (item.ContainingProject != null)
             //{
             //    if (item.Properties != null && item.FileCount > 0)
             //    {
@@ -55,21 +61,18 @@ namespace WebDeployParametersToolkit
 #pragma warning restore S125 // Sections of code should not be "commented out"
         }
 
-
-        public static void ApplyNesting(string itemPath)
-        {
-            var item = VSPackage.DteInstance.Solution.FindProjectItem(itemPath);
-            ApplyNesting(item);
-        }
-
         private static void ApplyNesting(ProjectItem item)
         {
             if (item == null)
+            {
                 return;
+            }
 
             Guid kind;
             if (!Guid.TryParse(item.Kind, out kind))
+            {
                 return;
+            }
 
             if (item.Properties != null && kind == VSConstants.ItemTypeGuid.PhysicalFile_guid)
             {

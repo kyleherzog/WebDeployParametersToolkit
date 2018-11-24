@@ -1,38 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Xml;
 using WebDeployParametersToolkit.Utilities;
 
 namespace WebDeployParametersToolkit.Tests
 {
-    class WebConfigSample
+    internal class WebConfigSample
     {
         public WebConfigSample(string xml)
         {
-            Document = new XmlDocument();
+            Document = new XmlDocument { XmlResolver = null };
             Document.LoadXml(xml);
             ExpectedSettings = new List<WebConfigSetting>();
         }
 
-        public IList<WebConfigSetting> ExpectedSettings { get; }
-
         public XmlDocument Document { get; }
 
-        public void AddExpectedApplicationSetting(string name, string nodePath, string value, ParametersGenerationStyle style)
+        public IList<WebConfigSetting> ExpectedSettings { get; }
+
+        public static WebConfigSample GetEmptySettings()
         {
-            var setting = new WebConfigSetting() { Name = name, NodePath = nodePath };
-            if (style == ParametersGenerationStyle.Tokenize)
-            {
-                setting.Value = $"__{setting.Name.ToUpperInvariant()}__";
-            }
-            else
-            {
-                setting.Value = value;
-            }
-            ExpectedSettings.Add(setting);
+            var result = new WebConfigSample(Properties.Resources.EmptySettings);
+            return result;
         }
 
         public static WebConfigSample GetLocationSimpleSettings()
@@ -83,10 +71,19 @@ namespace WebDeployParametersToolkit.Tests
             return result;
         }
 
-        public static WebConfigSample GetEmptySettings()
+        public void AddExpectedApplicationSetting(string name, string nodePath, string value, ParametersGenerationStyle style)
         {
-            var result = new WebConfigSample(Properties.Resources.EmptySettings);
-            return result;
+            var setting = new WebConfigSetting() { Name = name, NodePath = nodePath };
+            if (style == ParametersGenerationStyle.Tokenize)
+            {
+                setting.Value = $"__{setting.Name.ToUpperInvariant()}__";
+            }
+            else
+            {
+                setting.Value = value;
+            }
+
+            ExpectedSettings.Add(setting);
         }
     }
 }

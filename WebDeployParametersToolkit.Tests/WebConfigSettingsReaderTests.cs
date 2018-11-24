@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Xml;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebDeployParametersToolkit.Utilities;
 
 namespace WebDeployParametersToolkit.Tests
@@ -9,6 +6,14 @@ namespace WebDeployParametersToolkit.Tests
     [TestClass]
     public class WebConfigSettingsReaderTests
     {
+        [TestMethod]
+        public void ReadApplicationSettingsWithEmptySettingsReturnsZeroResults()
+        {
+            var emptySettings = WebConfigSample.GetEmptySettings();
+            var results = WebConfigSettingsReader.ReadApplicationSettings(emptySettings.Document, true, true, ParametersGenerationStyle.Tokenize);
+            emptySettings.ExpectedSettings.AssertHasSameItems(results);
+        }
+
         [TestMethod]
         public void ReadApplicationSettingsWithSimpleSettingsReturnsAllTokenized()
         {
@@ -28,11 +33,12 @@ namespace WebDeployParametersToolkit.Tests
         }
 
         [TestMethod]
-        public void ReadApplicationSettingsWithEmptySettingsReturnsZeroResults()
+        public void ReadCompilationDebugSettingsWitEmpySettingsReturnsNull()
         {
+            var style = ParametersGenerationStyle.Tokenize;
             var emptySettings = WebConfigSample.GetEmptySettings();
-            var results = WebConfigSettingsReader.ReadApplicationSettings(emptySettings.Document, true, true, ParametersGenerationStyle.Tokenize);
-            emptySettings.ExpectedSettings.AssertHasSameItems(results);
+            var result = WebConfigSettingsReader.ReadCompilationDebugSettings(emptySettings.Document, style);
+            Assert.IsNull(result);
         }
 
         [TestMethod]
@@ -54,12 +60,11 @@ namespace WebDeployParametersToolkit.Tests
         }
 
         [TestMethod]
-        public void ReadCompilationDebugSettingsWitEmpySettingsReturnsNull()
+        public void ReadMailSettingsWithEmptySettingsReturnsZeroResults()
         {
-            var style = ParametersGenerationStyle.Tokenize;
             var emptySettings = WebConfigSample.GetEmptySettings();
-            var result = WebConfigSettingsReader.ReadCompilationDebugSettings(emptySettings.Document, style);
-            Assert.IsNull(result);
+            var results = WebConfigSettingsReader.ReadMailSettings(emptySettings.Document, ParametersGenerationStyle.Tokenize);
+            emptySettings.ExpectedSettings.AssertHasSameItems(results);
         }
 
         [TestMethod]
@@ -81,10 +86,10 @@ namespace WebDeployParametersToolkit.Tests
         }
 
         [TestMethod]
-        public void ReadMailSettingsWithEmptySettingsReturnsZeroResults()
+        public void ReadSessionStateSettingsWithEmptySettingsReturnsZeroResults()
         {
             var emptySettings = WebConfigSample.GetEmptySettings();
-            var results = WebConfigSettingsReader.ReadMailSettings(emptySettings.Document, ParametersGenerationStyle.Tokenize);
+            var results = WebConfigSettingsReader.ReadSessionStateSettings(emptySettings.Document, ParametersGenerationStyle.Tokenize);
             emptySettings.ExpectedSettings.AssertHasSameItems(results);
         }
 
@@ -106,16 +111,8 @@ namespace WebDeployParametersToolkit.Tests
             simpleSettings.ExpectedSettings.AssertHasSameItems(results);
         }
 
-        [TestMethod]
-        public void ReadSessionStateSettingsWithEmptySettingsReturnsZeroResults()
-        {
-            var emptySettings = WebConfigSample.GetEmptySettings();
-            var results = WebConfigSettingsReader.ReadSessionStateSettings(emptySettings.Document, ParametersGenerationStyle.Tokenize);
-            emptySettings.ExpectedSettings.AssertHasSameItems(results);
-        }
-
-
         #region LocationSimpleSettings
+
         [TestMethod]
         public void ReadApplicationSettingsWithLocationSimpleSettingsReturnsAllTokenized()
         {
@@ -195,6 +192,7 @@ namespace WebDeployParametersToolkit.Tests
             var results = WebConfigSettingsReader.ReadSessionStateSettings(locationSimpleSettings.Document, style);
             simpleSettings.ExpectedSettings.AssertHasSameItems(results);
         }
-        #endregion
+
+        #endregion LocationSimpleSettings
     }
 }

@@ -1,9 +1,9 @@
-﻿using EnvDTE;
-using EnvDTE80;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using EnvDTE;
+using EnvDTE80;
 
 namespace WebDeployParametersToolkit.Extensions
 {
@@ -19,13 +19,16 @@ namespace WebDeployParametersToolkit.Extensions
                     .Where(x => x != null)
                     .SelectMany(AllProjects);
             }
+
             return new[] { project };
         }
 
         public static string RootFolderName(this Project project)
         {
             if (string.IsNullOrEmpty(project.FullName))
+            {
                 return null;
+            }
 
             string fullPath;
 
@@ -48,13 +51,19 @@ namespace WebDeployParametersToolkit.Extensions
             }
 
             if (string.IsNullOrEmpty(fullPath))
+            {
                 return File.Exists(project.FullName) ? Path.GetDirectoryName(project.FullName) : null;
+            }
 
             if (Directory.Exists(fullPath))
+            {
                 return fullPath;
+            }
 
             if (File.Exists(fullPath))
+            {
                 return Path.GetDirectoryName(fullPath);
+            }
 
             return null;
         }

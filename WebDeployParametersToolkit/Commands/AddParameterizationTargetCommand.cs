@@ -4,11 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
 using System.IO;
+using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using WebDeployParametersToolkit.Extensions;
 
 namespace WebDeployParametersToolkit
@@ -42,45 +42,19 @@ namespace WebDeployParametersToolkit
         {
             if (package == null)
             {
-                throw new ArgumentNullException("package");
+                throw new ArgumentNullException(nameof(package));
             }
 
             this.package = package;
 
-            OleMenuCommandService commandService = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
-                var menuItem = new OleMenuCommand(this.MenuItemCallback, menuCommandID);
+                var menuItem = new OleMenuCommand(MenuItemCallback, menuCommandID);
                 menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus;
                 commandService.AddCommand(menuItem);
             }
-        }
-
-        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
-        {
-            var menuItem = (OleMenuCommand)sender;
-            menuItem.Visible = false;
-
-            SolutionExplorerExtensions.LoadSelectedItemPath();
-
-            if (NeedsInitialization())
-            {
-                menuItem.Visible = true;
-            }
-        }
-
-        private bool NeedsInitialization()
-        {
-            var filePath = SolutionExplorerExtensions.SelectedItemPath;
-
-            if (!string.IsNullOrEmpty(filePath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase))
-            {
-                var projectFullName = VSPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
-                var project = new ParameterizationProject(projectFullName);
-                return project.NeedsInitialization;
-            }
-            return false;
         }
 
         /// <summary>
@@ -99,7 +73,7 @@ namespace WebDeployParametersToolkit
         {
             get
             {
-                return this.package;
+                return package;
             }
         }
 
@@ -110,6 +84,19 @@ namespace WebDeployParametersToolkit
         public static void Initialize(Package package)
         {
             Instance = new AddParameterizationTargetCommand(package);
+        }
+
+        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
+        {
+            var menuItem = (OleMenuCommand)sender;
+            menuItem.Visible = false;
+
+            SolutionExplorerExtensions.LoadSelectedItemPath();
+
+            if (NeedsInitialization())
+            {
+                menuItem.Visible = true;
+            }
         }
 
         /// <summary>
@@ -135,9 +122,25 @@ namespace WebDeployParametersToolkit
                 {
                     var child = item as ProjectItem;
                     if (child != null)
+                    {
                         child.Properties.Item("ItemType").Value = "Parameterization";
+                    }
                 }
             }
+        }
+
+        private bool NeedsInitialization()
+        {
+            var filePath = SolutionExplorerExtensions.SelectedItemPath;
+
+            if (!string.IsNullOrEmpty(filePath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase))
+            {
+                var projectFullName = VSPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
+                var project = new ParameterizationProject(projectFullName);
+                return project.NeedsInitialization;
+            }
+
+            return false;
         }
     }
 }

@@ -4,12 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
+using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using WebDeployParametersToolkit.Extensions;
 
 namespace WebDeployParametersToolkit
@@ -43,54 +43,19 @@ namespace WebDeployParametersToolkit
         {
             if (package == null)
             {
-                throw new ArgumentNullException("package");
+                throw new ArgumentNullException(nameof(package));
             }
 
             this.package = package;
 
-            OleMenuCommandService commandService = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
-                var menuItem = new OleMenuCommand(this.MenuItemCallback, menuCommandID);
+                var menuItem = new OleMenuCommand(MenuItemCallback, menuCommandID);
                 menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus;
                 commandService.AddCommand(menuItem);
             }
-        }
-
-        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
-        {
-            var menuItem = (OleMenuCommand)sender;
-            menuItem.Visible = false;
-
-            SolutionExplorerExtensions.LoadSelectedItemPath();
-
-            if (CanNestInParameters())
-            {
-                menuItem.Visible = true;
-            }
-        }
-
-        private bool CanNestInParameters()
-        {
-            var itemPath = SolutionExplorerExtensions.SelectedItemPath;
-            if (string.IsNullOrEmpty(itemPath))
-                return false;
-
-            var fileName = Path.GetFileName(itemPath);
-            var extension = Path.GetExtension(itemPath);
-            var directory = Path.GetDirectoryName(itemPath);
-            var parametersItem = VSPackage.DteInstance.Solution.FindProjectItem(Path.Combine(directory, "Parameters.xml"));
-
-            var setParametersItem = VSPackage.DteInstance.Solution.FindProjectItem(itemPath);
-
-            var currentParent = setParametersItem?.Collection?.Parent as ProjectItem;
-
-            return (fileName.StartsWith("setparameters", StringComparison.OrdinalIgnoreCase) 
-                && extension.Equals(".xml", StringComparison.OrdinalIgnoreCase) 
-                && parametersItem != null 
-                && setParametersItem != null 
-                && (currentParent == null || currentParent.Name != parametersItem.Name));
         }
 
         /// <summary>
@@ -109,7 +74,7 @@ namespace WebDeployParametersToolkit
         {
             get
             {
-                return this.package;
+                return package;
             }
         }
 
@@ -120,6 +85,43 @@ namespace WebDeployParametersToolkit
         public static void Initialize(Package package)
         {
             Instance = new NestCommand(package);
+        }
+
+        private bool CanNestInParameters()
+        {
+            var itemPath = SolutionExplorerExtensions.SelectedItemPath;
+            if (string.IsNullOrEmpty(itemPath))
+            {
+                return false;
+            }
+
+            var fileName = Path.GetFileName(itemPath);
+            var extension = Path.GetExtension(itemPath);
+            var directory = Path.GetDirectoryName(itemPath);
+            var parametersItem = VSPackage.DteInstance.Solution.FindProjectItem(Path.Combine(directory, "Parameters.xml"));
+
+            var setParametersItem = VSPackage.DteInstance.Solution.FindProjectItem(itemPath);
+
+            var currentParent = setParametersItem?.Collection?.Parent as ProjectItem;
+
+            return fileName.StartsWith("setparameters", StringComparison.OrdinalIgnoreCase)
+                && extension.Equals(".xml", StringComparison.OrdinalIgnoreCase)
+                && parametersItem != null
+                && setParametersItem != null
+                && (currentParent == null || currentParent.Name != parametersItem.Name);
+        }
+
+        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
+        {
+            var menuItem = (OleMenuCommand)sender;
+            menuItem.Visible = false;
+
+            SolutionExplorerExtensions.LoadSelectedItemPath();
+
+            if (CanNestInParameters())
+            {
+                menuItem.Visible = true;
+            }
         }
 
         /// <summary>
@@ -133,7 +135,7 @@ namespace WebDeployParametersToolkit
         {
             var dte = VSPackage.DteInstance;
 
-            //save node name details to maintain selection in solution explorer
+            // save node name details to maintain selection in solution explorer
             var selectedItem = ((Array)dte.ToolWindows.SolutionExplorer.SelectedItems).Cast<UIHierarchyItem>().First();
 
             var selectedParent = selectedItem.Collection.Parent as UIHierarchyItem;
