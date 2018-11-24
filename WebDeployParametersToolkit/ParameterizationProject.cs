@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
+﻿using System;
 using System.Linq;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace WebDeployParametersToolkit
 {
@@ -19,14 +19,16 @@ namespace WebDeployParametersToolkit
             get
             {
                 if (string.IsNullOrEmpty(FullName))
+                {
                     return false;
+                }
 
                 using (var projectCollection = new Microsoft.Build.Evaluation.ProjectCollection())
                 {
                     var buildProject = projectCollection.LoadProject(FullName);
                     var targets = buildProject.Xml.Targets;
 
-                    return (!targets.Any(t => t.Name == "SetParametersDeploy"));
+                    return !targets.Any(t => t.Name == "SetParametersDeploy");
                 }
             }
         }
@@ -60,9 +62,11 @@ namespace WebDeployParametersToolkit
                             buildProject.Xml.Save();
                         }
                     }
+
                     ReloadProject(FullName);
                 }
             }
+
             return true;
         }
 
@@ -90,9 +94,9 @@ namespace WebDeployParametersToolkit
             Guid projectGuid;
             int hr;
 
-            uint VSITEMID_ROOT = 0xFFFFFFFE;
+            var itemIdRoot = 0xFFFFFFFE;
 
-            hr = hierarchy.GetGuidProperty(VSITEMID_ROOT, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out projectGuid);
+            hr = hierarchy.GetGuidProperty(itemIdRoot, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out projectGuid);
             ErrorHandler.ThrowOnFailure(hr);
 
             return projectGuid;
