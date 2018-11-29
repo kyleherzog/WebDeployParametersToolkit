@@ -111,8 +111,6 @@ namespace WebDeployParametersToolkit.Tests
             simpleSettings.ExpectedSettings.AssertHasSameItems(results);
         }
 
-        #region LocationSimpleSettings
-
         [TestMethod]
         public void ReadApplicationSettingsWithLocationSimpleSettingsReturnsAllTokenized()
         {
@@ -192,7 +190,5 @@ namespace WebDeployParametersToolkit.Tests
             var results = WebConfigSettingsReader.ReadSessionStateSettings(locationSimpleSettings.Document, style);
             simpleSettings.ExpectedSettings.AssertHasSameItems(results);
         }
-
-        #endregion LocationSimpleSettings
     }
 }

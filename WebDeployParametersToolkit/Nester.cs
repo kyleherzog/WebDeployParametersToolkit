@@ -22,6 +22,8 @@ namespace WebDeployParametersToolkit
 
         public static void ApplyNesting(string itemPath)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var item = VSPackage.DteInstance.Solution.FindProjectItem(itemPath);
             ApplyNesting(item);
         }
@@ -41,12 +43,12 @@ namespace WebDeployParametersToolkit
         private static void ItemAddedRenamed(ProjectItem item)
 #pragma warning restore S1172 // Unused method parameters should be removed
         {
-            //TODO fix: this causes VS to throw a 'System.AccessViolationException' if it needs to initialize the project.
+            // TODO fix: this causes VS to throw a 'System.AccessViolationException' if it needs to initialize the project.
             //          Just commenting feature out for now.
-
 #pragma warning disable S125 // Sections of code should not be "commented out"
-            //if (item.ContainingProject != null)
-            //{
+
+            // if (item.ContainingProject != null)
+            // {
             //    if (item.Properties != null && item.FileCount > 0)
             //    {
             //        var itemFileName = item.FileNames[0];
@@ -57,12 +59,13 @@ namespace WebDeployParametersToolkit
             //            ApplyNesting(itemFileName);
             //        }
             //    }
-            //}
+            // }
 #pragma warning restore S125 // Sections of code should not be "commented out"
         }
 
         private static void ApplyNesting(ProjectItem item)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             if (item == null)
             {
                 return;

@@ -88,6 +88,7 @@ namespace WebDeployParametersToolkit
 
         private bool CanGenerateApplyMissingParameters()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var item = SolutionExplorerExtensions.SelectedItemPath;
             if (string.IsNullOrEmpty(item))
             {
@@ -124,6 +125,7 @@ namespace WebDeployParametersToolkit
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try
             {
                 var fileName = SolutionExplorerExtensions.SelectedItemPath;
@@ -142,7 +144,10 @@ namespace WebDeployParametersToolkit
                 else
                 {
                     var document = new XmlDocument { XmlResolver = null };
-                    document.Load(SolutionExplorerExtensions.SelectedItemPath);
+                    var text = File.ReadAllText(SolutionExplorerExtensions.SelectedItemPath);
+                    var sreader = new StringReader(text);
+                    var xmlReader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+                    document.Load(xmlReader);
 
                     var parametersNode = document.SelectSingleNode("/parameters");
 

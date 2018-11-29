@@ -7,6 +7,7 @@ using System.Text;
 using System.Xml;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
 using WebDeployParametersToolkit.Extensions;
 using WebDeployParametersToolkit.Utilities;
 
@@ -122,8 +123,9 @@ namespace WebDeployParametersToolkit
             }
         }
 
-        private void GenerateFile(string fileName)
+        private async System.Threading.Tasks.Task GenerateFileAsync(string fileName)
         {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             var settings = GetWebConfigSettings(fileName);
 
             var folder = Path.GetDirectoryName(fileName);
@@ -136,12 +138,13 @@ namespace WebDeployParametersToolkit
                         OLEMSGICON.OLEMSGICON_QUERY,
                         VSPackage.Shell))
                 {
-                    UpdateParametersXml(settings, targetName);
+                    await UpdateParametersXmlAsync(settings, targetName).ConfigureAwait(true);
                 }
             }
             else
             {
                 CreateParametersXml(settings, targetName);
+
                 var project = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject;
                 project.ProjectItems.AddFromFile(targetName);
             }
@@ -201,7 +204,10 @@ namespace WebDeployParametersToolkit
             try
             {
                 var fileName = SolutionExplorerExtensions.SelectedItemPath;
-                GenerateFile(fileName);
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
+                {
+                    await GenerateFileAsync(fileName).ConfigureAwait(true);
+                });
             }
             catch (Exception ex)
             {
@@ -220,8 +226,9 @@ namespace WebDeployParametersToolkit
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
 
-        private void UpdateParametersXml(IEnumerable<WebConfigSetting> settings, string fileName)
+        private async System.Threading.Tasks.Task UpdateParametersXmlAsync(IEnumerable<WebConfigSetting> settings, string fileName)
         {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             var projectName = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.Name;
             var reader = new ParametersXmlReader(fileName, projectName);
             var parameters = reader.Read();
@@ -239,7 +246,10 @@ namespace WebDeployParametersToolkit
             EnsureUniqueSettingsNames(missingSettings, parameters.Select(p => p.Name).ToList());
 
             var document = new XmlDocument { XmlResolver = null };
-            document.Load(fileName);
+            var text = File.ReadAllText(fileName);
+            var sreader = new StringReader(text);
+            var xmlReader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+            document.Load(xmlReader);
 
             var builder = new StringBuilder();
             var writer = XmlWriter.Create(builder, new XmlWriterSettings() { Indent = true, OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Fragment });

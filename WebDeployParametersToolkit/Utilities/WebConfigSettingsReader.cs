@@ -223,7 +223,12 @@ namespace WebDeployParametersToolkit.Utilities
             if (File.Exists(FileName))
             {
                 var document = new XmlDocument { XmlResolver = null };
-                document.Load(FileName);
+
+                var text = File.ReadAllText(FileName);
+                var sreader = new StringReader(text);
+                var xmlReader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+
+                document.Load(xmlReader);
 
                 results.AddRange(ReadApplicationSettings(document, IncludeAppSettings, IncludeApplicationSettings, ValuesStyle));
                 if (IncludeCompilationDebug)

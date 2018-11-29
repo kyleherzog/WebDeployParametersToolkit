@@ -37,6 +37,8 @@ namespace WebDeployParametersToolkit.Extensions
 
         public static IEnumerable<string> SelectedItemPaths(this UIHierarchy solutionExplorer)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var items = (Array)solutionExplorer.SelectedItems;
 
             foreach (UIHierarchyItem selItem in items)
@@ -62,6 +64,8 @@ namespace WebDeployParametersToolkit.Extensions
 
         private static void AddAncestorNames(UIHierarchyItem item, ICollection<string> names)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             if (item == null)
             {
                 return;

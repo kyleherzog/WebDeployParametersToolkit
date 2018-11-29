@@ -34,7 +34,7 @@ namespace WebDeployParametersToolkit
     public sealed class VSPackage : Package
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenerateSetParametersCommand"/> class.
+        /// Initializes a new instance of the <see cref="VSPackage"/> class.
         /// </summary>
         public VSPackage()
         {
@@ -60,6 +60,8 @@ namespace WebDeployParametersToolkit
         /// </summary>
         protected override void Initialize()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             GenerateSetParametersCommand.Initialize(this);
             NestCommand.Initialize(this);
 

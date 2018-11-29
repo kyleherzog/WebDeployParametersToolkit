@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Xml;
 using WebDeployParametersToolkit.Utilities;
 
@@ -9,7 +10,11 @@ namespace WebDeployParametersToolkit.Tests
         public WebConfigSample(string xml)
         {
             Document = new XmlDocument { XmlResolver = null };
-            Document.LoadXml(xml);
+
+            var sreader = new System.IO.StringReader(xml);
+            var reader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+            Document.Load(reader);
+
             ExpectedSettings = new List<WebConfigSetting>();
         }
 
@@ -34,11 +39,11 @@ namespace WebDeployParametersToolkit.Tests
             var result = new WebConfigSample(Properties.Resources.SimpleSettings);
 
             var appSettingsPathFormat = "/configuration//appSettings/add[@key='{0}']/@value";
-            result.AddExpectedApplicationSetting("AppSettingsKey", string.Format(appSettingsPathFormat, "AppSettingsKey"), "0123", style);
+            result.AddExpectedApplicationSetting("AppSettingsKey", string.Format(CultureInfo.InvariantCulture, appSettingsPathFormat, "AppSettingsKey"), "0123", style);
 
             var applicationSettingsPathFormat = "/configuration//applicationSettings/TestApp.Properties.Settings/setting[@name='{0}']/value/text()";
-            result.AddExpectedApplicationSetting("SomeString", string.Format(applicationSettingsPathFormat, "SomeString"), "String value is here.", style);
-            result.AddExpectedApplicationSetting("SomeBoolean", string.Format(applicationSettingsPathFormat, "SomeBoolean"), "True", style);
+            result.AddExpectedApplicationSetting("SomeString", string.Format(CultureInfo.InvariantCulture, applicationSettingsPathFormat, "SomeString"), "String value is here.", style);
+            result.AddExpectedApplicationSetting("SomeBoolean", string.Format(CultureInfo.InvariantCulture, applicationSettingsPathFormat, "SomeBoolean"), "True", style);
 
             return result;
         }

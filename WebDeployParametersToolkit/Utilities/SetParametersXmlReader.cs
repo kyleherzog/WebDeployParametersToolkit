@@ -11,7 +11,13 @@ namespace WebDeployParametersToolkit.Utilities
             var results = new Dictionary<string, string>();
 
             var document = new XmlDocument { XmlResolver = null };
-            document.Load(fileName);
+
+            var text = File.ReadAllText(fileName);
+            var sreader = new StringReader(text);
+            var xmlReader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+
+            document.Load(xmlReader);
+
             var nav = document.CreateNavigator();
             nav.MoveToFirstChild();
             if (nav.Name != "parameters")

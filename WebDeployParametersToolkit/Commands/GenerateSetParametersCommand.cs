@@ -90,7 +90,7 @@ namespace WebDeployParametersToolkit
             return !string.IsNullOrEmpty(SolutionExplorerExtensions.SelectedItemPath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase);
         }
 
-        private void CreateSetXml(IEnumerable<WebDeployParameter> parameters, string fileName)
+        private void CreateSetXml(IEnumerable<WebDeployParameter> webDeployParameters, string fileName)
         {
             var writer = XmlWriter.Create(fileName, new XmlWriterSettings() { Indent = true });
 
@@ -98,7 +98,7 @@ namespace WebDeployParametersToolkit
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("parameters");
-                foreach (var parameter in parameters)
+                foreach (var parameter in webDeployParameters)
                 {
                     writer.WriteStartElement("setParameter");
                     writer.WriteAttributeString("name", parameter.Name);
@@ -116,6 +116,8 @@ namespace WebDeployParametersToolkit
 
         private void GenerateFile(string fileName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var sourceName = SolutionExplorerExtensions.SelectedItemPath;
             var folder = Path.GetDirectoryName(sourceName);
             var targetName = Path.Combine(folder, fileName);
@@ -131,7 +133,8 @@ namespace WebDeployParametersToolkit
             var parameterizationProject = new ParameterizationProject(projectFullName);
             if (parameterizationProject.Initialize())
             {
-                var parameters = ParseParameters(sourceName);
+                var projectName = VSPackage.DteInstance.Solution.FindProjectItem(sourceName).ContainingProject.Name;
+                var parameters = ParseParameters(sourceName, projectName);
                 CreateSetXml(parameters, targetName);
                 var parent = VSPackage.DteInstance.Solution.FindProjectItem(sourceName);
                 var item = parent.ProjectItems.AddFromFile(targetName);
@@ -162,6 +165,7 @@ namespace WebDeployParametersToolkit
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var dialog = new FileNameDialog();
             var hwnd = new IntPtr(VSPackage.DteInstance.MainWindow.HWnd);
             var window = (System.Windows.Window)HwndSource.FromHwnd(hwnd).RootVisual;
@@ -174,12 +178,11 @@ namespace WebDeployParametersToolkit
             }
         }
 
-        private IEnumerable<WebDeployParameter> ParseParameters(string fileName)
+        private IEnumerable<WebDeployParameter> ParseParameters(string fileName, string projectName)
         {
             IEnumerable<WebDeployParameter> results = null;
             try
             {
-                var projectName = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.Name;
                 var reader = new ParametersXmlReader(fileName, projectName);
                 results = reader.Read();
             }

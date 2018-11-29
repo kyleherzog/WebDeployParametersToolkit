@@ -11,11 +11,17 @@ namespace WebDeployParametersToolkit.Extensions
     {
         public static IEnumerable<Project> AllProjects(this Project project)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             if (project.Kind == ProjectKinds.vsProjectKindSolutionFolder)
             {
                 return project.ProjectItems
                     .Cast<ProjectItem>()
-                    .Select(x => x.SubProject)
+                    .Select(x =>
+                    {
+                        Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+                        return x.SubProject;
+                    })
                     .Where(x => x != null)
                     .SelectMany(AllProjects);
             }
@@ -25,6 +31,8 @@ namespace WebDeployParametersToolkit.Extensions
 
         public static string RootFolderName(this Project project)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             if (string.IsNullOrEmpty(project.FullName))
             {
                 return null;

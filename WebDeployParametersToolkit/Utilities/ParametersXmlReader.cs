@@ -10,7 +10,10 @@ namespace WebDeployParametersToolkit.Utilities
         public ParametersXmlReader(string fileName, string projectName)
         {
             Document = new XmlDocument { XmlResolver = null };
-            Document.Load(fileName);
+            var text = File.ReadAllText(fileName);
+            var sreader = new StringReader(text);
+            var xmlReader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+            Document.Load(xmlReader);
 
             ProjectName = projectName;
 
@@ -19,7 +22,10 @@ namespace WebDeployParametersToolkit.Utilities
             if (File.Exists(configFileName))
             {
                 AutoParametersDocument = new XmlDocument { XmlResolver = null };
-                AutoParametersDocument.Load(configFileName);
+                var configText = File.ReadAllText(configFileName);
+                var configStringReader = new StringReader(configText);
+                var xmlConfigReader = new XmlTextReader(configStringReader) { DtdProcessing = DtdProcessing.Prohibit };
+                AutoParametersDocument.Load(xmlConfigReader);
             }
         }
 
@@ -31,14 +37,20 @@ namespace WebDeployParametersToolkit.Utilities
         public ParametersXmlReader(string parametersXml, string projectName, string webConfigXml)
         {
             Document = new XmlDocument { XmlResolver = null };
-            Document.LoadXml(parametersXml);
+
+            var sreader = new System.IO.StringReader(parametersXml);
+            var reader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+            Document.Load(reader);
 
             ProjectName = projectName;
 
             if (!string.IsNullOrEmpty(webConfigXml))
             {
                 AutoParametersDocument = new XmlDocument { XmlResolver = null };
-                AutoParametersDocument.LoadXml(webConfigXml);
+
+                var stringReader = new System.IO.StringReader(webConfigXml);
+                var parametersReader = new XmlTextReader(stringReader) { DtdProcessing = DtdProcessing.Prohibit };
+                AutoParametersDocument.Load(parametersReader);
             }
         }
 

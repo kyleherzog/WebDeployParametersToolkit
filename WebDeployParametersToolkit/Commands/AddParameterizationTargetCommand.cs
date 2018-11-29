@@ -108,6 +108,7 @@ namespace WebDeployParametersToolkit
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var filePath = SolutionExplorerExtensions.SelectedItemPath;
 
             if (!string.IsNullOrEmpty(filePath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase))
@@ -131,6 +132,7 @@ namespace WebDeployParametersToolkit
 
         private bool NeedsInitialization()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var filePath = SolutionExplorerExtensions.SelectedItemPath;
 
             if (!string.IsNullOrEmpty(filePath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase))

@@ -89,6 +89,7 @@ namespace WebDeployParametersToolkit
 
         private bool CanNestInParameters()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var itemPath = SolutionExplorerExtensions.SelectedItemPath;
             if (string.IsNullOrEmpty(itemPath))
             {
@@ -133,6 +134,7 @@ namespace WebDeployParametersToolkit
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var dte = VSPackage.DteInstance;
 
             // save node name details to maintain selection in solution explorer

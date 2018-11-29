@@ -35,6 +35,8 @@ namespace WebDeployParametersToolkit
 
         public bool Initialize()
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             if (NeedsInitialization)
             {
                 if (VSPackage.CoreDte.ItemOperations.PromptToSave == EnvDTE.vsPromptResult.vsPromptResultCancelled)
@@ -72,6 +74,8 @@ namespace WebDeployParametersToolkit
 
         private static void ReloadProject(string projectFullName)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var solution = VSPackage.Solution as IVsSolution4;
             var projectGuid = GetProjectGuid(projectFullName);
             solution.ReloadProject(projectGuid);
@@ -79,6 +83,8 @@ namespace WebDeployParametersToolkit
 
         private static void UnloadProject(string projectFullName)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var solution = VSPackage.Solution as IVsSolution4;
             var projectGuid = GetProjectGuid(projectFullName);
 
@@ -87,6 +93,8 @@ namespace WebDeployParametersToolkit
 
         private static Guid GetProjectGuid(string projectFullName)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var solution = VSPackage.Solution as IVsSolution;
             IVsHierarchy hierarchy;
             solution.GetProjectOfUniqueName(projectFullName, out hierarchy);
