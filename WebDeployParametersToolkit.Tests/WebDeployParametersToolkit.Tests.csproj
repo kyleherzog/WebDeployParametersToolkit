@@ -57,16 +57,19 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParametersXmlReaderTests\ReadShould.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ParametersXmlReaderTests.cs" />
     <Compile Include="WebConfigSample.cs" />
     <Compile Include="WebConfigSettingsAsserts.cs" />
-    <Compile Include="WebConfigSettingsReaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebConfigSettingsReaderTests\ReadApplicationSettingsShould.cs" />
+    <Compile Include="WebConfigSettingsReaderTests\ReadCompilationDebugSettingsShould.cs" />
+    <Compile Include="WebConfigSettingsReaderTests\ReadMailSettingsShould.cs" />
+    <Compile Include="WebConfigSettingsReaderTests\ReadSessionStateSettingsShould.cs" />
     <Compile Include="WebDeployParameterAsserts.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +132,7 @@
     <Analyzer Include="..\packages\Text.Analyzers.2.6.2\analyzers\dotnet\cs\Text.Analyzers.dll" />
     <Analyzer Include="..\packages\Text.Analyzers.2.6.2\analyzers\dotnet\cs\Text.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
