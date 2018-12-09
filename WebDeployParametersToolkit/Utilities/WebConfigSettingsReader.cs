@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using WebDeployParametersToolkit.Extensions;
 
 namespace WebDeployParametersToolkit.Utilities
 {
@@ -41,7 +42,7 @@ namespace WebDeployParametersToolkit.Utilities
                     if (keyAttribute != null)
                     {
                         var settingName = keyAttribute.Value;
-                        var settingPath = $"{appSettingsPath}[@key='{settingName}']/@value";
+                        var settingPath = $"{node.GetFullPath(new string[] { "path" })}[@key='{settingName}']/@value";
                         var setting = new WebConfigSetting()
                         {
                             Name = settingName,
@@ -68,13 +69,14 @@ namespace WebDeployParametersToolkit.Utilities
 
                 if (settingsNode != null)
                 {
+                    var settingsNodePath = settingsNode.GetFullPath(new string[] { "path" });
                     var nav = settingsNode.CreateNavigator();
                     if (nav.MoveToFirstChild())
                     {
                         do
                         {
                             var groupName = nav.Name;
-                            var groupPath = $"{basePath}/{nav.Name}";
+                            var groupPath = $"{settingsNodePath}/{nav.Name}";
                             if (nav.MoveToFirstChild())
                             {
                                 do

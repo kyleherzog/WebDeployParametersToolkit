@@ -71,6 +71,7 @@
     <Compile Include="WebConfigSettingsReaderTests\ReadMailSettingsShould.cs" />
     <Compile Include="WebConfigSettingsReaderTests\ReadSessionStateSettingsShould.cs" />
     <Compile Include="WebDeployParameterAsserts.cs" />
+    <Compile Include="XmlNodeExtensionsTests\GetFullPathShould.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

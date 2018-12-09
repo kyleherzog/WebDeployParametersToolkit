@@ -6,11 +6,14 @@ namespace WebDeployParametersToolkit.Tests.WebConfigSettingsReaderTests
     [TestClass]
     public class ReadApplicationSettingsShould
     {
+        private const string standardSettingsRootPath = "/configuration/";
+        private const string nestedSettingsRootPath = "/configuration/location[@path=\"subfolder\"]/";
+
         [TestMethod]
         public void ReturnAllTokenizedGivenTokenizeStyle()
         {
             var style = ParametersGenerationStyle.Tokenize;
-            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(style);
+            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(standardSettingsRootPath, style);
             var results = WebConfigSettingsReader.ReadApplicationSettings(simpleSettings.Document, true, true, style);
             simpleSettings.ExpectedSettings.AssertHasSameItems(results);
         }
@@ -19,7 +22,7 @@ namespace WebDeployParametersToolkit.Tests.WebConfigSettingsReaderTests
         public void ReturnAllWithValuesGivenCloneStyle()
         {
             var style = ParametersGenerationStyle.Clone;
-            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(style);
+            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(standardSettingsRootPath, style);
             var results = WebConfigSettingsReader.ReadApplicationSettings(simpleSettings.Document, true, true, style);
             simpleSettings.ExpectedSettings.AssertHasSameItems(results);
         }
@@ -28,7 +31,7 @@ namespace WebDeployParametersToolkit.Tests.WebConfigSettingsReaderTests
         public void ReturnTokenizedValuesGivenTokenizeStyleAndSettingsNestedUnderLocationTag()
         {
             var style = ParametersGenerationStyle.Tokenize;
-            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(style);
+            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(nestedSettingsRootPath, style);
             var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
             var results = WebConfigSettingsReader.ReadApplicationSettings(locationSimpleSettings.Document, true, true, style);
             simpleSettings.ExpectedSettings.AssertHasSameItems(results);
@@ -38,7 +41,7 @@ namespace WebDeployParametersToolkit.Tests.WebConfigSettingsReaderTests
         public void ReturnValuesGivenCloneStyleAndSettingsNestedUnderLocationTag()
         {
             var style = ParametersGenerationStyle.Clone;
-            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(style);
+            var simpleSettings = WebConfigSample.GetSimpleApplicationSettings(nestedSettingsRootPath, style);
             var locationSimpleSettings = WebConfigSample.GetLocationSimpleSettings();
             var results = WebConfigSettingsReader.ReadApplicationSettings(locationSimpleSettings.Document, true, true, style);
             simpleSettings.ExpectedSettings.AssertHasSameItems(results);

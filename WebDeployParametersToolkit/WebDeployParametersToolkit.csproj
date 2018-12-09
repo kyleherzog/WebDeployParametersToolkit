@@ -78,6 +78,8 @@
     <Compile Include="Dialogs\OptionsPageGrid.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Extensions\XmlDocumentExtensions.cs" />
+    <Compile Include="Extensions\XmlNodeExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ParameterizationProject.cs" />
     <Compile Include="source.extension.cs">
