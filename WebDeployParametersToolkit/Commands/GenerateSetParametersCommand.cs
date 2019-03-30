@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Windows.Interop;
 using System.Xml;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using WebDeployParametersToolkit.Extensions;
 using WebDeployParametersToolkit.Utilities;
 
@@ -40,38 +40,20 @@ namespace WebDeployParametersToolkit
         {
             if (package == null)
             {
-                throw new ArgumentNullException("package");
+                throw new ArgumentNullException(nameof(package));
             }
 
             this.package = package;
 
-            OleMenuCommandService commandService = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
 
-                var menuItem = new OleMenuCommand(this.MenuItemCallback, menuCommandID);
+                var menuItem = new OleMenuCommand(MenuItemCallback, menuCommandID);
                 menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus;
                 commandService.AddCommand(menuItem);
             }
-        }
-
-        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
-        {
-            var menuItem = (OleMenuCommand)sender;
-            menuItem.Visible = false;
-
-            SolutionExplorerExtensions.LoadSelectedItemPath();
-
-            if (CanGenerateSetParameters())
-            {
-                menuItem.Visible = true;
-            }
-        }
-
-        private bool CanGenerateSetParameters()
-        {
-            return (!string.IsNullOrEmpty(SolutionExplorerExtensions.SelectedItemPath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -90,7 +72,7 @@ namespace WebDeployParametersToolkit
         {
             get
             {
-                return this.package;
+                return package;
             }
         }
 
@@ -103,29 +85,39 @@ namespace WebDeployParametersToolkit
             Instance = new GenerateSetParametersCommand(package);
         }
 
-        /// <summary>
-        /// This function is the callback used to execute the command when the menu item is clicked.
-        /// See the constructor to see how the menu item is associated with this function using
-        /// OleMenuCommandService service and MenuCommand class.
-        /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Event args.</param>
-        private void MenuItemCallback(object sender, EventArgs e)
+        private bool CanGenerateSetParameters()
         {
-            var dialog = new FileNameDialog();
-            var hwnd = new IntPtr(VSPackage.DteInstance.MainWindow.HWnd);
-            var window = (System.Windows.Window)HwndSource.FromHwnd(hwnd).RootVisual;
-            dialog.Owner = window;
+            return !string.IsNullOrEmpty(SolutionExplorerExtensions.SelectedItemPath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase);
+        }
 
-            var result = dialog.ShowDialog();
-            if (result.HasValue && result.Value)
+        private void CreateSetXml(IEnumerable<WebDeployParameter> webDeployParameters, string fileName)
+        {
+            var writer = XmlWriter.Create(fileName, new XmlWriterSettings() { Indent = true });
+
+            try
             {
-                GenerateFile(dialog.Input);
+                writer.WriteStartDocument();
+                writer.WriteStartElement("parameters");
+                foreach (var parameter in webDeployParameters)
+                {
+                    writer.WriteStartElement("setParameter");
+                    writer.WriteAttributeString("name", parameter.Name);
+                    writer.WriteAttributeString("value", parameter.DefaultValue);
+                    writer.WriteEndElement();
+                }
+
+                writer.WriteEndDocument();
+            }
+            finally
+            {
+                writer.Close();
             }
         }
 
         private void GenerateFile(string fileName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var sourceName = SolutionExplorerExtensions.SelectedItemPath;
             var folder = Path.GetDirectoryName(sourceName);
             var targetName = Path.Combine(folder, fileName);
@@ -141,7 +133,8 @@ namespace WebDeployParametersToolkit
             var parameterizationProject = new ParameterizationProject(projectFullName);
             if (parameterizationProject.Initialize())
             {
-                var parameters = ParseParameters(sourceName);
+                var projectName = VSPackage.DteInstance.Solution.FindProjectItem(sourceName).ContainingProject.Name;
+                var parameters = ParseParameters(sourceName, projectName);
                 CreateSetXml(parameters, targetName);
                 var parent = VSPackage.DteInstance.Solution.FindProjectItem(sourceName);
                 var item = parent.ProjectItems.AddFromFile(targetName);
@@ -150,35 +143,46 @@ namespace WebDeployParametersToolkit
             }
         }
 
-        private void CreateSetXml(IEnumerable<WebDeployParameter> parameters, string fileName)
+        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
         {
-            XmlWriter writer = XmlWriter.Create(fileName, new XmlWriterSettings() { Indent = true });
+            var menuItem = (OleMenuCommand)sender;
+            menuItem.Visible = false;
 
-            try
+            SolutionExplorerExtensions.LoadSelectedItemPath();
+
+            if (CanGenerateSetParameters())
             {
-                writer.WriteStartDocument();
-                writer.WriteStartElement("parameters");
-                foreach (var parameter in parameters)
-                {
-                    writer.WriteStartElement("setParameter");
-                    writer.WriteAttributeString("name", parameter.Name);
-                    writer.WriteAttributeString("value", parameter.DefaultValue);
-                    writer.WriteEndElement();
-                }
-                writer.WriteEndDocument();
-            }
-            finally
-            {
-                writer.Close();
+                menuItem.Visible = true;
             }
         }
 
-        private IEnumerable<WebDeployParameter> ParseParameters(string fileName)
+        /// <summary>
+        /// This function is the callback used to execute the command when the menu item is clicked.
+        /// See the constructor to see how the menu item is associated with this function using
+        /// OleMenuCommandService service and MenuCommand class.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
+        private void MenuItemCallback(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var dialog = new FileNameDialog();
+            var hwnd = new IntPtr(VSPackage.DteInstance.MainWindow.HWnd);
+            var window = (System.Windows.Window)HwndSource.FromHwnd(hwnd).RootVisual;
+            dialog.Owner = window;
+
+            var result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                GenerateFile(dialog.Input);
+            }
+        }
+
+        private IEnumerable<WebDeployParameter> ParseParameters(string fileName, string projectName)
         {
             IEnumerable<WebDeployParameter> results = null;
             try
             {
-                var projectName = VSPackage.DteInstance.Solution.FindProjectItem(fileName).ContainingProject.Name;
                 var reader = new ParametersXmlReader(fileName, projectName);
                 results = reader.Read();
             }
@@ -186,13 +190,14 @@ namespace WebDeployParametersToolkit
             {
                 ShowMessage("Parameters.xml Error", ex.Message);
             }
+
             return results;
         }
 
         private void ShowMessage(string title, string message)
         {
             VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
+                ServiceProvider,
                 message,
                 title,
                 OLEMSGICON.OLEMSGICON_INFO,

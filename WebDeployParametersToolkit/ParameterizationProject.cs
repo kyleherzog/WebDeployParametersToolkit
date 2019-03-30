@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
+﻿using System;
 using System.Linq;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace WebDeployParametersToolkit
 {
@@ -19,20 +19,24 @@ namespace WebDeployParametersToolkit
             get
             {
                 if (string.IsNullOrEmpty(FullName))
+                {
                     return false;
+                }
 
                 using (var projectCollection = new Microsoft.Build.Evaluation.ProjectCollection())
                 {
                     var buildProject = projectCollection.LoadProject(FullName);
                     var targets = buildProject.Xml.Targets;
 
-                    return (!targets.Any(t => t.Name == "SetParametersDeploy"));
+                    return !targets.Any(t => t.Name == "SetParametersDeploy");
                 }
             }
         }
 
         public bool Initialize()
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             if (NeedsInitialization)
             {
                 if (VSPackage.CoreDte.ItemOperations.PromptToSave == EnvDTE.vsPromptResult.vsPromptResultCancelled)
@@ -60,14 +64,18 @@ namespace WebDeployParametersToolkit
                             buildProject.Xml.Save();
                         }
                     }
+
                     ReloadProject(FullName);
                 }
             }
+
             return true;
         }
 
         private static void ReloadProject(string projectFullName)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var solution = VSPackage.Solution as IVsSolution4;
             var projectGuid = GetProjectGuid(projectFullName);
             solution.ReloadProject(projectGuid);
@@ -75,6 +83,8 @@ namespace WebDeployParametersToolkit
 
         private static void UnloadProject(string projectFullName)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var solution = VSPackage.Solution as IVsSolution4;
             var projectGuid = GetProjectGuid(projectFullName);
 
@@ -83,6 +93,8 @@ namespace WebDeployParametersToolkit
 
         private static Guid GetProjectGuid(string projectFullName)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var solution = VSPackage.Solution as IVsSolution;
             IVsHierarchy hierarchy;
             solution.GetProjectOfUniqueName(projectFullName, out hierarchy);
@@ -90,9 +102,9 @@ namespace WebDeployParametersToolkit
             Guid projectGuid;
             int hr;
 
-            uint VSITEMID_ROOT = 0xFFFFFFFE;
+            var itemIdRoot = 0xFFFFFFFE;
 
-            hr = hierarchy.GetGuidProperty(VSITEMID_ROOT, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out projectGuid);
+            hr = hierarchy.GetGuidProperty(itemIdRoot, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out projectGuid);
             ErrorHandler.ThrowOnFailure(hr);
 
             return projectGuid;

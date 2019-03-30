@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -13,8 +9,11 @@ namespace WebDeployParametersToolkit.Utilities
     {
         public ParametersXmlReader(string fileName, string projectName)
         {
-            Document = new XmlDocument();
-            Document.Load(fileName);
+            Document = new XmlDocument { XmlResolver = null };
+            var text = File.ReadAllText(fileName);
+            var sreader = new StringReader(text);
+            var xmlReader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+            Document.Load(xmlReader);
 
             ProjectName = projectName;
 
@@ -22,26 +21,36 @@ namespace WebDeployParametersToolkit.Utilities
             var configFileName = Path.Combine(folder, "web.config");
             if (File.Exists(configFileName))
             {
-                AutoParametersDocument = new XmlDocument();
-                AutoParametersDocument.Load(configFileName);
+                AutoParametersDocument = new XmlDocument { XmlResolver = null };
+                var configText = File.ReadAllText(configFileName);
+                var configStringReader = new StringReader(configText);
+                var xmlConfigReader = new XmlTextReader(configStringReader) { DtdProcessing = DtdProcessing.Prohibit };
+                AutoParametersDocument.Load(xmlConfigReader);
             }
         }
 
-        public ParametersXmlReader(XmlDocument document, string projectName): this(document, projectName, null)
+        public ParametersXmlReader(XmlDocument document, string projectName)
+            : this(document, projectName, null)
         {
         }
 
         public ParametersXmlReader(string parametersXml, string projectName, string webConfigXml)
         {
-            Document = new XmlDocument();
-            Document.LoadXml(parametersXml);
+            Document = new XmlDocument { XmlResolver = null };
+
+            var sreader = new System.IO.StringReader(parametersXml);
+            var reader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+            Document.Load(reader);
 
             ProjectName = projectName;
 
             if (!string.IsNullOrEmpty(webConfigXml))
             {
-                AutoParametersDocument = new XmlDocument();
-                AutoParametersDocument.LoadXml(webConfigXml);
+                AutoParametersDocument = new XmlDocument { XmlResolver = null };
+
+                var stringReader = new System.IO.StringReader(webConfigXml);
+                var parametersReader = new XmlTextReader(stringReader) { DtdProcessing = DtdProcessing.Prohibit };
+                AutoParametersDocument.Load(parametersReader);
             }
         }
 
@@ -52,11 +61,23 @@ namespace WebDeployParametersToolkit.Utilities
             AutoParametersDocument = autoParametersDocument;
         }
 
-        public XmlDocument Document { get; }
-
         public XmlDocument AutoParametersDocument { get; }
 
+        public XmlDocument Document { get; }
+
         public string ProjectName { get; }
+
+        public ICollection<WebDeployParameter> GetAutoParameters()
+        {
+            var results = GetConnectionStringParameters();
+
+            results.Add(new WebDeployParameter()
+            {
+                Name = "IIS Web Application Name",
+                DefaultValue = ProjectName
+            });
+            return results;
+        }
 
         public IEnumerable<WebDeployParameter> Read()
         {
@@ -68,6 +89,7 @@ namespace WebDeployParametersToolkit.Utilities
             {
                 throw new FileFormatException($"Error parsing parameters xml. Expecting element 'parameters'.");
             }
+
             if (nav.MoveToFirstChild())
             {
                 do
@@ -94,27 +116,19 @@ namespace WebDeployParametersToolkit.Utilities
                                         Scope = nav.GetAttribute("scope", string.Empty)
                                     });
                                 }
-                            } while (nav.MoveToNext());
+                            }
+                            while (nav.MoveToNext());
                         }
+
                         nav.MoveToParent();
 
                         result.Entries = entries;
                         results.Add(result);
                     }
-                } while (nav.MoveToNext());
+                }
+                while (nav.MoveToNext());
             }
-            return results;
-        }
 
-        public ICollection<WebDeployParameter> GetAutoParameters()
-        {
-            var results = GetConnectionStringParameters();            
-
-            results.Add(new WebDeployParameter()
-            {
-                Name = "IIS Web Application Name",
-                DefaultValue = ProjectName
-            });
             return results;
         }
 
@@ -147,17 +161,19 @@ namespace WebDeployParametersToolkit.Utilities
                                         {
                                             Kind = "XmlFile",
                                             Match = $"/configuration/connectionStrings/add[@name='{baseName}']/@connectionString",
-                                            Scope = @"\\web.config$" //This isn't exactly right it will be an exact path.
+                                            Scope = @"\\web.config$" // This isn't exactly right it will be an exact path.
                                         }
                                     }
                                 };
 
                                 results.Add(result);
                             }
-                        } while (nav.MoveToNext());
+                        }
+                        while (nav.MoveToNext());
                     }
                 }
             }
+
             return results;
         }
     }

@@ -11,18 +11,19 @@ download in the
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
-## 2.1
-**2017-9-10**
-- [x] Added support for optional "location" element under "configuration" element.
+## 3.0
+**2018-12-9**
+- [x] Visual Studio 2019 support
+- [x] Web.config "location" element support
 
 ## 2.0
 **2017-3-5**
-- [x] Option to set default parameters to values from web.config or to tokenized values.
+- [x] Option to set default parameters to values from web.config or to tokenized values
 
 ## 1.8
 **2017-3-4**
 - [x] Generate parameters for appSettings
-- [x] Open files in editor window after being generated/updated.
+- [x] Open files in editor window after being generated/updated
 
 ## 1.7
 **2017-2-18**

@@ -1,27 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebDeployParametersToolkit.Utilities;
-using WebDeployParametersToolkit.Tests;
 
-namespace WebDeployParametersToolkit.Tests
+namespace WebDeployParametersToolkit.Tests.ParametersXmlReaderTests
 {
     [TestClass]
-    public class ParametersXmlReaderTests
+    public class ReadShould
     {
         private const string defaultProjectName = "MyTestProject";
 
         [TestMethod]
-        [ExpectedException(typeof(FileFormatException))]
-        public void ReadThrowsExceptionIfRootElementNotParameters()
+        public void ReturnExpectedValuesWhenUsingEmptySettings()
         {
-            var reader = new ParametersXmlReader("<?xml version=\"1.0\" encoding=\"utf-8\" ?><configuration></configuration>", defaultProjectName, null);
-            reader.Read();
+            var expected = GetBasicParameters(false);
+            var reader = new ParametersXmlReader(Properties.Resources.BasicParameters, defaultProjectName, Properties.Resources.EmptySettings);
+            var parameters = reader.Read();
+            parameters.AssertHasSameItems(expected);
         }
 
         [TestMethod]
-        public void ReadReturnsExpectedValuesWhenUsingSimpleSettings()
+        public void ReturnExpectedValuesWhenUsingSimpleSettings()
         {
             var expected = GetBasicParameters(true);
             var reader = new ParametersXmlReader(Properties.Resources.BasicParameters, defaultProjectName, Properties.Resources.SimpleSettings);
@@ -30,15 +29,14 @@ namespace WebDeployParametersToolkit.Tests
         }
 
         [TestMethod]
-        public void ReadReturnsExpectedValuesWhenUsingEmptySettings()
+        [ExpectedException(typeof(FileFormatException))]
+        public void ThrowExceptionIfRootElementNotParameters()
         {
-            var expected = GetBasicParameters(false);
-            var reader = new ParametersXmlReader(Properties.Resources.BasicParameters, defaultProjectName, Properties.Resources.EmptySettings);
-            var parameters = reader.Read();
-            parameters.AssertHasSameItems(expected);
+            var reader = new ParametersXmlReader("<?xml version=\"1.0\" encoding=\"utf-8\" ?><configuration></configuration>", defaultProjectName, null);
+            reader.Read();
         }
 
-        private ICollection<WebDeployParameter>GetAutoParameters()
+        private ICollection<WebDeployParameter> GetAutoParameters()
         {
             var results = new List<WebDeployParameter>();
 
@@ -117,11 +115,11 @@ namespace WebDeployParametersToolkit.Tests
             });
 
             if (includeAutoConnectionParameters)
+            {
                 results.AddRange(GetAutoParameters());
+            }
 
             return results;
         }
-
-
     }
 }

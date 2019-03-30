@@ -30,7 +30,7 @@ namespace WebDeployParametersToolkit.Tests
                         throw new AssertFailedException($"Non-matching properties({nameof(WebDeployParameter.Description)}) on parameter named '{sourceItem.Name}' source({sourceItem.Description}) vs. target({targetItem.Description}).");
                     }
                     else if ((sourceItem.Entries != null && (targetItem.Entries == null || sourceItem.Entries.Count() != targetItem.Entries.Count()))
-                        || sourceItem.Entries == null && targetItem.Entries != null)
+                        || (sourceItem.Entries == null && targetItem.Entries != null))
                     {
                         throw new AssertFailedException($"Non-matching {nameof(WebDeployParameter.Entries)} count on parameter named '{sourceItem.Name}' source({sourceItem.Entries?.Count()}) vs. target({targetItem.Entries?.Count()}).");
                     }
@@ -45,7 +45,6 @@ namespace WebDeployParametersToolkit.Tests
                         }
                     }
                 }
-                return;
             }
             else
             {

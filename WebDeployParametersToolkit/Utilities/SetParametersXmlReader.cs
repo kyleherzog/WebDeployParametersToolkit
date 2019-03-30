@@ -10,14 +10,21 @@ namespace WebDeployParametersToolkit.Utilities
         {
             var results = new Dictionary<string, string>();
 
-            var document = new XmlDocument();
-            document.Load(fileName);
+            var document = new XmlDocument { XmlResolver = null };
+
+            var text = File.ReadAllText(fileName);
+            var sreader = new StringReader(text);
+            var xmlReader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+
+            document.Load(xmlReader);
+
             var nav = document.CreateNavigator();
             nav.MoveToFirstChild();
             if (nav.Name != "parameters")
             {
                 throw new FileFormatException($"Error parsing {fileName}. Expecting element parameters.");
             }
+
             nav.MoveToFirstChild();
             do
             {
@@ -27,7 +34,8 @@ namespace WebDeployParametersToolkit.Utilities
                     var value = nav.GetAttribute("value", string.Empty);
                     results.Add(name, value);
                 }
-            } while (nav.MoveToNext());
+            }
+            while (nav.MoveToNext());
 
             return results;
         }

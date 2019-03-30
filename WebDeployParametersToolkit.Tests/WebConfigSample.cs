@@ -1,38 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Xml;
 using WebDeployParametersToolkit.Utilities;
 
 namespace WebDeployParametersToolkit.Tests
 {
-    class WebConfigSample
+    internal class WebConfigSample
     {
         public WebConfigSample(string xml)
         {
-            Document = new XmlDocument();
-            Document.LoadXml(xml);
+            Document = new XmlDocument { XmlResolver = null };
+
+            var sreader = new System.IO.StringReader(xml);
+            var reader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+            Document.Load(reader);
+
             ExpectedSettings = new List<WebConfigSetting>();
         }
 
-        public IList<WebConfigSetting> ExpectedSettings { get; }
-
         public XmlDocument Document { get; }
 
-        public void AddExpectedApplicationSetting(string name, string nodePath, string value, ParametersGenerationStyle style)
+        public IList<WebConfigSetting> ExpectedSettings { get; }
+
+        public static WebConfigSample GetEmptySettings()
         {
-            var setting = new WebConfigSetting() { Name = name, NodePath = nodePath };
-            if (style == ParametersGenerationStyle.Tokenize)
-            {
-                setting.Value = $"__{setting.Name.ToUpperInvariant()}__";
-            }
-            else
-            {
-                setting.Value = value;
-            }
-            ExpectedSettings.Add(setting);
+            var result = new WebConfigSample(Properties.Resources.EmptySettings);
+            return result;
         }
 
         public static WebConfigSample GetLocationSimpleSettings()
@@ -41,16 +34,16 @@ namespace WebDeployParametersToolkit.Tests
             return result;
         }
 
-        public static WebConfigSample GetSimpleApplicationSettings(ParametersGenerationStyle style)
+        public static WebConfigSample GetSimpleApplicationSettings(string pathRoot, ParametersGenerationStyle style)
         {
             var result = new WebConfigSample(Properties.Resources.SimpleSettings);
 
-            var appSettingsPathFormat = "/configuration//appSettings/add[@key='{0}']/@value";
-            result.AddExpectedApplicationSetting("AppSettingsKey", string.Format(appSettingsPathFormat, "AppSettingsKey"), "0123", style);
+            var appSettingsPathFormat = $"{pathRoot}appSettings/add[@key='{{0}}']/@value";
+            result.AddExpectedApplicationSetting("AppSettingsKey", string.Format(CultureInfo.InvariantCulture, appSettingsPathFormat, "AppSettingsKey"), "0123", style);
 
-            var applicationSettingsPathFormat = "/configuration//applicationSettings/TestApp.Properties.Settings/setting[@name='{0}']/value/text()";
-            result.AddExpectedApplicationSetting("SomeString", string.Format(applicationSettingsPathFormat, "SomeString"), "String value is here.", style);
-            result.AddExpectedApplicationSetting("SomeBoolean", string.Format(applicationSettingsPathFormat, "SomeBoolean"), "True", style);
+            var applicationSettingsPathFormat = $"{pathRoot}applicationSettings/TestApp.Properties.Settings/setting[@name='{{0}}']/value/text()";
+            result.AddExpectedApplicationSetting("SomeString", string.Format(CultureInfo.InvariantCulture, applicationSettingsPathFormat, "SomeString"), "String value is here.", style);
+            result.AddExpectedApplicationSetting("SomeBoolean", string.Format(CultureInfo.InvariantCulture, applicationSettingsPathFormat, "SomeBoolean"), "True", style);
 
             return result;
         }
@@ -83,10 +76,19 @@ namespace WebDeployParametersToolkit.Tests
             return result;
         }
 
-        public static WebConfigSample GetEmptySettings()
+        public void AddExpectedApplicationSetting(string name, string nodePath, string value, ParametersGenerationStyle style)
         {
-            var result = new WebConfigSample(Properties.Resources.EmptySettings);
-            return result;
+            var setting = new WebConfigSetting() { Name = name, NodePath = nodePath };
+            if (style == ParametersGenerationStyle.Tokenize)
+            {
+                setting.Value = $"__{setting.Name.ToUpperInvariant()}__";
+            }
+            else
+            {
+                setting.Value = value;
+            }
+
+            ExpectedSettings.Add(setting);
         }
     }
 }
