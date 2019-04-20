@@ -34,7 +34,7 @@ namespace WebDeployParametersToolkit
     public sealed class VSPackage : AsyncPackage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenerateSetParametersCommand"/> class.
+        /// Initializes a new instance of the <see cref="VSPackage"/> class.
         /// </summary>
         public VSPackage()
         {

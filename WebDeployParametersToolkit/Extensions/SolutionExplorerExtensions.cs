@@ -1,9 +1,9 @@
-﻿using EnvDTE;
-using EnvDTE80;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using EnvDTE;
+using EnvDTE80;
 
 namespace WebDeployParametersToolkit.Extensions
 {
@@ -18,13 +18,27 @@ namespace WebDeployParametersToolkit.Extensions
             var paths = dte.ToolWindows.SolutionExplorer.SelectedItemPaths();
 
             if (paths.Count() == 1)
+            {
                 SelectedItemPath = paths.First();
+            }
             else
+            {
                 SelectedItemPath = null;
+            }
+        }
+
+        public static string NodeName(this UIHierarchyItem item)
+        {
+            var names = new List<string>();
+            AddAncestorNames(item, names);
+            names.Reverse();
+            return string.Join("\\", names);
         }
 
         public static IEnumerable<string> SelectedItemPaths(this UIHierarchy solutionExplorer)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             var items = (Array)solutionExplorer.SelectedItems;
 
             foreach (UIHierarchyItem selItem in items)
@@ -48,22 +62,20 @@ namespace WebDeployParametersToolkit.Extensions
             }
         }
 
-        public static string NodeName(this UIHierarchyItem item)
-        {
-            var names = new List<string>();
-            AddAncestorNames(item, names);
-            names.Reverse();
-            return string.Join("\\", names);
-        }
-
         private static void AddAncestorNames(UIHierarchyItem item, ICollection<string> names)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+
             if (item == null)
+            {
                 return;
+            }
 
             names.Add(item.Name);
             if (item.Collection != null)
+            {
                 AddAncestorNames(item.Collection.Parent as UIHierarchyItem, names);
+            }
         }
     }
 }

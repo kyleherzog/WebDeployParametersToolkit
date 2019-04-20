@@ -1,11 +1,11 @@
-﻿using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
+﻿using System;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using EnvDTE;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using WebDeployParametersToolkit.Extensions;
 using WebDeployParametersToolkit.Utilities;
 
@@ -40,22 +40,68 @@ namespace WebDeployParametersToolkit
         {
             if (package == null)
             {
-                throw new ArgumentNullException("package");
+                throw new ArgumentNullException(nameof(package));
             }
 
             this.package = package;
 
-            OleMenuCommandService commandService = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
-                var menuItem = new OleMenuCommand(this.MenuItemCallback, menuCommandID);
+                var menuItem = new OleMenuCommand(MenuItemCallback, menuCommandID);
                 menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus;
                 commandService.AddCommand(menuItem);
             }
         }
 
+        /// <summary>
+        /// Gets the instance of the command.
+        /// </summary>
+        public static ApplyMissingParametersCommand Instance
+        {
+            get;
+            private set;
+        }
+
         private ProjectItem ParametersXmlItem { get; set; }
+
+        /// <summary>
+        /// Gets the service provider from the owner package.
+        /// </summary>
+        private IServiceProvider ServiceProvider
+        {
+            get
+            {
+                return package;
+            }
+        }
+
+        /// <summary>
+        /// Initializes the singleton instance of the command.
+        /// </summary>
+        /// <param name="package">Owner package, not null.</param>
+        public static void Initialize(Package package)
+        {
+            Instance = new ApplyMissingParametersCommand(package);
+        }
+
+        private bool CanGenerateApplyMissingParameters()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var item = SolutionExplorerExtensions.SelectedItemPath;
+            if (string.IsNullOrEmpty(item))
+            {
+                return false;
+            }
+
+            var fileName = Path.GetFileName(item);
+            var extension = Path.GetExtension(item);
+            var directory = Path.GetDirectoryName(item);
+            ParametersXmlItem = VSPackage.DteInstance.Solution.FindProjectItem(Path.Combine(directory, "Parameters.xml"));
+
+            return fileName.StartsWith("setparameters", StringComparison.OrdinalIgnoreCase) && extension.Equals(".xml", StringComparison.OrdinalIgnoreCase) && ParametersXmlItem != null;
+        }
 
         private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
         {
@@ -70,49 +116,6 @@ namespace WebDeployParametersToolkit
             }
         }
 
-        private bool CanGenerateApplyMissingParameters()
-        {
-            var item = SolutionExplorerExtensions.SelectedItemPath;
-            if (string.IsNullOrEmpty(item))
-                return false;
-
-            var fileName = Path.GetFileName(item);
-            var extension = Path.GetExtension(item);
-            var directory = Path.GetDirectoryName(item);
-            ParametersXmlItem = VSPackage.DteInstance.Solution.FindProjectItem(Path.Combine(directory, "Parameters.xml"));
-
-            return (fileName.StartsWith("setparameters", StringComparison.OrdinalIgnoreCase) && extension.Equals(".xml", StringComparison.OrdinalIgnoreCase) && ParametersXmlItem != null);
-        }
-
-        /// <summary>
-        /// Gets the instance of the command.
-        /// </summary>
-        public static ApplyMissingParametersCommand Instance
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private IServiceProvider ServiceProvider
-        {
-            get
-            {
-                return this.package;
-            }
-        }
-
-        /// <summary>
-        /// Initializes the singleton instance of the command.
-        /// </summary>
-        /// <param name="package">Owner package, not null.</param>
-        public static void Initialize(Package package)
-        {
-            Instance = new ApplyMissingParametersCommand(package);
-        }
-
         /// <summary>
         /// This function is the callback used to execute the command when the menu item is clicked.
         /// See the constructor to see how the menu item is associated with this function using
@@ -122,6 +125,7 @@ namespace WebDeployParametersToolkit
         /// <param name="e">Event args.</param>
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try
             {
                 var fileName = SolutionExplorerExtensions.SelectedItemPath;
@@ -139,8 +143,11 @@ namespace WebDeployParametersToolkit
                 }
                 else
                 {
-                    var document = new XmlDocument();
-                    document.Load(SolutionExplorerExtensions.SelectedItemPath);
+                    var document = new XmlDocument { XmlResolver = null };
+                    var text = File.ReadAllText(SolutionExplorerExtensions.SelectedItemPath);
+                    var sreader = new StringReader(text);
+                    var xmlReader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+                    document.Load(xmlReader);
 
                     var parametersNode = document.SelectSingleNode("/parameters");
 
@@ -155,7 +162,6 @@ namespace WebDeployParametersToolkit
                     document.Save(fileName);
                     VSPackage.DteInstance.Solution.FindProjectItem(fileName).Open().Visible = true;
                 }
-
             }
             catch (Exception ex)
             {
@@ -166,7 +172,7 @@ namespace WebDeployParametersToolkit
         private void ShowMessage(string title, string message)
         {
             VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
+                ServiceProvider,
                 message,
                 title,
                 OLEMSGICON.OLEMSGICON_INFO,
