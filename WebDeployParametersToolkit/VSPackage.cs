@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
@@ -24,14 +25,13 @@ namespace WebDeployParametersToolkit
     /// To get loaded into VS, the package must be referred by &lt;Asset Type="Microsoft.VisualStudio.VsPackage" ...&gt; in .vsixmanifest file.
     /// </para>
     /// </remarks>
-    [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", Vsix.Version, IconResourceID = 400)] // Info on this package for Help/About
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PackageGuids.guidWebDeployParametersToolkitPackageString)]
-    [ProvideAutoLoad(UIContextGuids80.SolutionHasSingleProject)]
-    [ProvideAutoLoad(UIContextGuids80.SolutionHasMultipleProjects)]
+    [ProvideAutoLoad(UIContextGuids80.SolutionHasSingleProject, PackageAutoLoadFlags.BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids80.SolutionHasMultipleProjects, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideOptionPage(typeof(OptionsPageGrid), "Web Deploy Parameters Toolkit", "General", 0, 0, true)]
-    public sealed class VSPackage : Package
+    public sealed class VSPackage : AsyncPackage
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="VSPackage"/> class.
@@ -58,19 +58,22 @@ namespace WebDeployParametersToolkit
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
         /// where you can put all the initialization code that rely on services provided by VisualStudio.
         /// </summary>
-        protected override void Initialize()
+        /// <param name="cancellationToken">todo: describe cancellationToken parameter on InitializeAsync</param>
+        /// <param name="progress">todo: describe progress parameter on InitializeAsync</param>
+        /// <returns>Awaitable Task</returns>
+        protected override async System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
             GenerateSetParametersCommand.Initialize(this);
             NestCommand.Initialize(this);
 
-            base.Initialize();
+            await base.InitializeAsync(cancellationToken, progress).ConfigureAwait(true);
 
-            CoreDte = GetService(typeof(DTE)) as DTE;
-            DteInstance = GetService(typeof(DTE)) as DTE2;
-            Shell = GetService(typeof(SVsUIShell)) as IVsUIShell;
-            Solution = GetService(typeof(SVsSolution)) as SVsSolution;
+            CoreDte = await GetServiceAsync(typeof(DTE)).ConfigureAwait(true) as DTE;
+            DteInstance = await GetServiceAsync(typeof(DTE)).ConfigureAwait(true) as DTE2;
+            Shell = await GetServiceAsync(typeof(SVsUIShell)).ConfigureAwait(true) as IVsUIShell;
+            Solution = await GetServiceAsync(typeof(SVsSolution)).ConfigureAwait(true) as SVsSolution;
 
             OptionsPage = (OptionsPageGrid)GetDialogPage(typeof(OptionsPageGrid));
 
