@@ -34,7 +34,7 @@ Starting in version 2.0, the options dialog also allows the user to select how t
 ### Generate SetParameters[Environment].xml
 Select the Parameters.xml file in solution explorer and right-click.
 
-![Parameters Xml Context Menu](art/ParametersXmlContextMenu.png)
+![Parameters XML Context Menu](art/ParametersXmlContextMenu.png)
 
 Then select *Generate SetParameters.xml*. 
 
@@ -42,7 +42,7 @@ A dialog will then give you the option to add an environment name to the new Set
 
 ![Set Parameters Name Dialog](art/SetParametersNameDialog.png)
 
-Either enter an envionment name or leave it blank and then click *Create*. Then the new SetPameters.xml file is created.
+Either enter an environment name or leave it blank and then click *Create*. Then the new SetPameters.xml file is created.
 
 ### Import Missing Parameters into SetParameters.xml files
 If parameters have been added to the Parameters.xml file, the new parameters can be automatically added to a SetParameters.xml file.  Just select the SetParameters.xml file in solution explorer and right-click.
