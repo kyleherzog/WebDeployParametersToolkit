@@ -1,6 +1,6 @@
 # Web Deploy Parameters Toolkit
 
-[![Build status](https://ci.appveyor.com/api/projects/status/pjlmikxue6721vab?svg=true)](https://ci.appveyor.com/project/kyleherzog/webdeployparameterstoolkit)
+[![Build status](https://ci.appveyor.com/api/projects/status/pjlmikxue6721vab/branch/master?svg=true)](https://ci.appveyor.com/project/kyleherzog/webdeployparameterstoolkit/branch/master)
 
 Download this extension from the [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=kherzog.WebDeployParametersToolkit)
 or get the [CI build](http://vsixgallery.com/extension/6435437e-72fb-4626-9a47-865f185ce258/).
