@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
 
 namespace WebDeployParametersToolkit.Extensions
 {
@@ -30,6 +31,9 @@ namespace WebDeployParametersToolkit.Extensions
         public static string NodeName(this UIHierarchyItem item)
         {
             var names = new List<string>();
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             AddAncestorNames(item, names);
             names.Reverse();
             return string.Join("\\", names);

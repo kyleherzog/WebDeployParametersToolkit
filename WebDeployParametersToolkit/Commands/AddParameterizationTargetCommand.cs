@@ -31,23 +31,17 @@ namespace WebDeployParametersToolkit
         /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
-        private readonly Package package;
+        private readonly AsyncPackage package;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AddParameterizationTargetCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private AddParameterizationTargetCommand(Package package)
+        private AddParameterizationTargetCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
-            if (package == null)
-            {
-                throw new ArgumentNullException(nameof(package));
-            }
+            this.package = package ?? throw new ArgumentNullException(nameof(package));
 
-            this.package = package;
-
-            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
@@ -81,9 +75,29 @@ namespace WebDeployParametersToolkit
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        public static void Initialize(Package package)
+        public static async System.Threading.Tasks.Task InitializeAsync(AsyncPackage package)
         {
-            Instance = new AddParameterizationTargetCommand(package);
+            // Switch to the main thread - the call to AddCommand in SampleCommand's constructor requires
+            // the UI thread.
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+
+            var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)).ConfigureAwait(true) as OleMenuCommandService;
+            Instance = new AddParameterizationTargetCommand(package, commandService);
+        }
+
+        private static bool NeedsInitialization()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var filePath = SolutionExplorerExtensions.SelectedItemPath;
+
+            if (!string.IsNullOrEmpty(filePath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase))
+            {
+                var projectFullName = VSPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
+                var project = new ParameterizationProject(projectFullName);
+                return project.NeedsInitialization;
+            }
+
+            return false;
         }
 
         private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
@@ -92,7 +106,7 @@ namespace WebDeployParametersToolkit
             menuItem.Visible = false;
 
             SolutionExplorerExtensions.LoadSelectedItemPath();
-
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (NeedsInitialization())
             {
                 menuItem.Visible = true;
@@ -128,21 +142,6 @@ namespace WebDeployParametersToolkit
                     }
                 }
             }
-        }
-
-        private bool NeedsInitialization()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            var filePath = SolutionExplorerExtensions.SelectedItemPath;
-
-            if (!string.IsNullOrEmpty(filePath) && "Parameters.xml".Equals(Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath), StringComparison.OrdinalIgnoreCase))
-            {
-                var projectFullName = VSPackage.DteInstance.Solution.FindProjectItem(filePath).ContainingProject.FullName;
-                var project = new ParameterizationProject(projectFullName);
-                return project.NeedsInitialization;
-            }
-
-            return false;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 
@@ -46,7 +47,7 @@ namespace WebDeployParametersToolkit
                 else
                 {
                     UnloadProject(FullName);
-                    using (var projectCollection = new Microsoft.Build.Evaluation.ProjectCollection())
+                    using (var projectCollection = new ProjectCollection())
                     {
                         var buildProject = projectCollection.LoadProject(FullName);
                         var targets = buildProject.Xml.Targets;
