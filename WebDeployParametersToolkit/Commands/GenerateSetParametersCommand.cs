@@ -38,12 +38,7 @@ namespace WebDeployParametersToolkit
         /// <param name="package">Owner package, not null.</param>
         private GenerateSetParametersCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
-            if (package == null)
-            {
-                throw new ArgumentNullException(nameof(package));
-            }
-
-            this.package = package;
+            this.package = package ?? throw new ArgumentNullException(nameof(package));
 
             if (commandService != null)
             {

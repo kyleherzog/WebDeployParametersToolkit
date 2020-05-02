@@ -8,15 +8,15 @@ namespace WebDeployParametersToolkit
 {
     internal static class Nester
     {
-        private static ProjectItemsEvents _events;
+        private static ProjectItemsEvents events;
 
         public static void Initialize(DTE2 dte)
         {
-            if (_events == null)
+            if (events == null)
             {
-                _events = ((Events2)dte.Events).ProjectItemsEvents;
-                _events.ItemAdded += ItemAdded;
-                _events.ItemRenamed += ItemRenamed;
+                events = ((Events2)dte.Events).ProjectItemsEvents;
+                events.ItemAdded += ItemAdded;
+                events.ItemRenamed += ItemRenamed;
             }
         }
 
@@ -71,8 +71,7 @@ namespace WebDeployParametersToolkit
                 return;
             }
 
-            Guid kind;
-            if (!Guid.TryParse(item.Kind, out kind))
+            if (!Guid.TryParse(item.Kind, out var kind))
             {
                 return;
             }

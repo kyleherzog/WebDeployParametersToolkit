@@ -47,19 +47,15 @@ namespace WebDeployParametersToolkit.Extensions
 
             foreach (UIHierarchyItem selItem in items)
             {
-                var item = selItem.Object as ProjectItem;
-                var project = selItem.Object as Project;
-                var solution = selItem.Object as Solution;
-
-                if (item != null && item.Properties != null)
+                if (selItem.Object is ProjectItem item && item.Properties != null)
                 {
                     yield return item.Properties.Item("FullPath").Value.ToString();
                 }
-                else if (project != null && project.Kind != ProjectKinds.vsProjectKindSolutionFolder)
+                else if (selItem.Object is Project project && project.Kind != ProjectKinds.vsProjectKindSolutionFolder)
                 {
                     yield return project.RootFolderName();
                 }
-                else if (solution != null && !string.IsNullOrEmpty(solution.FullName))
+                else if (selItem.Object is Solution solution && !string.IsNullOrEmpty(solution.FullName))
                 {
                     yield return Path.GetDirectoryName(solution.FullName);
                 }

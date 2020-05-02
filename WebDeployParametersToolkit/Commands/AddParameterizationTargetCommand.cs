@@ -135,8 +135,7 @@ namespace WebDeployParametersToolkit
 
                 foreach (var item in parent.ProjectItems)
                 {
-                    var child = item as ProjectItem;
-                    if (child != null)
+                    if (item is ProjectItem child)
                     {
                         child.Properties.Item("ItemType").Value = "Parameterization";
                     }

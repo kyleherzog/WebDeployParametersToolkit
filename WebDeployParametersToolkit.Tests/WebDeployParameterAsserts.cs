@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebDeployParametersToolkit.Utilities;
 
@@ -12,6 +10,16 @@ namespace WebDeployParametersToolkit.Tests
     {
         public static void AssertHasSameItems(this IEnumerable<WebDeployParameter> source, IEnumerable<WebDeployParameter> target)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
             if (source.Count() == target.Count())
             {
                 foreach (var sourceItem in source)

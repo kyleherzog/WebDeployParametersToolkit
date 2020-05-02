@@ -24,13 +24,11 @@ namespace WebDeployParametersToolkit
                     return false;
                 }
 
-                using (var projectCollection = new Microsoft.Build.Evaluation.ProjectCollection())
-                {
-                    var buildProject = projectCollection.LoadProject(FullName);
-                    var targets = buildProject.Xml.Targets;
+                using var projectCollection = new Microsoft.Build.Evaluation.ProjectCollection();
+                var buildProject = projectCollection.LoadProject(FullName);
+                var targets = buildProject.Xml.Targets;
 
-                    return !targets.Any(t => t.Name == "SetParametersDeploy");
-                }
+                return !targets.Any(t => t.Name == "SetParametersDeploy");
             }
         }
 
@@ -97,15 +95,13 @@ namespace WebDeployParametersToolkit
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
 
             var solution = VSPackage.Solution as IVsSolution;
-            IVsHierarchy hierarchy;
-            solution.GetProjectOfUniqueName(projectFullName, out hierarchy);
+            solution.GetProjectOfUniqueName(projectFullName, out var hierarchy);
 
-            Guid projectGuid;
             int hr;
 
             var itemIdRoot = 0xFFFFFFFE;
 
-            hr = hierarchy.GetGuidProperty(itemIdRoot, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out projectGuid);
+            hr = hierarchy.GetGuidProperty(itemIdRoot, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out var projectGuid);
             ErrorHandler.ThrowOnFailure(hr);
 
             return projectGuid;
