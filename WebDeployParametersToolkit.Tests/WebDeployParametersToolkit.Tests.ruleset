@@ -22,6 +22,7 @@
     <Rule Id="SA1121" Action="Hidden" />
     <Rule Id="SA1305" Action="None" />
     <Rule Id="SA1311" Action="None" />
+    <Rule Id="SA1600" Action="Hidden" />
   </Rules>
   <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
     <Rule Id="S1858" Action="Warning" />

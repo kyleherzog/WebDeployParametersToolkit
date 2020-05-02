@@ -19,7 +19,7 @@ namespace WebDeployParametersToolkit.Tests.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -99,7 +99,7 @@ namespace WebDeployParametersToolkit.Tests.Properties {
         ///      &lt;section name=&quot;TestApp.Properties.Settings&quot; type=&quot;System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089&quot; requirePermission=&quot;false&quot; /&gt;
         ///    &lt;/sectionGroup&gt;
         ///  &lt;/configSections&gt;
-        ///  &lt;location&gt; [rest of string was truncated]&quot;;.
+        ///  &lt;location  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LocationSimpleSettings {
             get {

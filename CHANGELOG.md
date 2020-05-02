@@ -11,6 +11,10 @@ download in the
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
+## 3.1
+**2020-5-2**
+- [x] Added asynchronous loading support
+
 ## 3.0
 **2018-12-9**
 - [x] Visual Studio 2019 support

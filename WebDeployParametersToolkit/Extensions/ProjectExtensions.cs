@@ -68,12 +68,7 @@ namespace WebDeployParametersToolkit.Extensions
                 return fullPath;
             }
 
-            if (File.Exists(fullPath))
-            {
-                return Path.GetDirectoryName(fullPath);
-            }
-
-            return null;
+            return File.Exists(fullPath) ? Path.GetDirectoryName(fullPath) : null;
         }
     }
 }

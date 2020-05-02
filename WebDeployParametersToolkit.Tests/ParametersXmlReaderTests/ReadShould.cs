@@ -36,83 +36,86 @@ namespace WebDeployParametersToolkit.Tests.ParametersXmlReaderTests
             reader.Read();
         }
 
-        private ICollection<WebDeployParameter> GetAutoParameters()
+        private static ICollection<WebDeployParameter> GetAutoParameters()
         {
-            var results = new List<WebDeployParameter>();
-
-            results.Add(new WebDeployParameter()
+            var results = new List<WebDeployParameter>
             {
-                Name = "FirstConnectionString-Web.config Connection String",
-                DefaultValue = "server=localhost;database=FirstDb;uid=myUser;password=myPass;",
-                Description = "FirstConnectionString Connection String used in web.config by the application to access the database.",
-                Entries = new List<WebDeployParameterEntry>()
+                new WebDeployParameter
                 {
-                    new WebDeployParameterEntry()
+                    Name = "FirstConnectionString-Web.config Connection String",
+                    DefaultValue = "server=localhost;database=FirstDb;uid=myUser;password=myPass;",
+                    Description = "FirstConnectionString Connection String used in web.config by the application to access the database.",
+                    Entries = new List<WebDeployParameterEntry>
                     {
-                        Kind = "XmlFile",
-                        Match = "/configuration/connectionStrings/add[@name='FirstConnectionString']/@connectionString",
-                        Scope = @"\\web.config$"
-                    }
-                }
-            });
-            results.Add(new WebDeployParameter()
-            {
-                Name = "SecondConnectionString-Web.config Connection String",
-                DefaultValue = "server=localhost;database=SecondDb;uid=myUser;password=myPass;",
-                Description = "SecondConnectionString Connection String used in web.config by the application to access the database.",
-                Entries = new List<WebDeployParameterEntry>()
+                        new WebDeployParameterEntry()
+                        {
+                            Kind = "XmlFile",
+                            Match = "/configuration/connectionStrings/add[@name='FirstConnectionString']/@connectionString",
+                            Scope = @"\\web.config$",
+                        },
+                    },
+                },
+                new WebDeployParameter
                 {
-                    new WebDeployParameterEntry()
+                    Name = "SecondConnectionString-Web.config Connection String",
+                    DefaultValue = "server=localhost;database=SecondDb;uid=myUser;password=myPass;",
+                    Description = "SecondConnectionString Connection String used in web.config by the application to access the database.",
+                    Entries = new List<WebDeployParameterEntry>
                     {
-                        Kind = "XmlFile",
-                        Match = "/configuration/connectionStrings/add[@name='SecondConnectionString']/@connectionString",
-                        Scope = @"\\web.config$"
-                    }
-                }
-            });
+                        new WebDeployParameterEntry
+                        {
+                            Kind = "XmlFile",
+                            Match = "/configuration/connectionStrings/add[@name='SecondConnectionString']/@connectionString",
+                            Scope = @"\\web.config$",
+                        },
+                    },
+                },
+            };
 
             return results;
         }
 
-        private ICollection<WebDeployParameter> GetBasicParameters(bool includeAutoConnectionParameters)
+        private static ICollection<WebDeployParameter> GetBasicParameters(bool includeAutoConnectionParameters)
         {
-            var results = new List<WebDeployParameter>();
-            results.Add(new WebDeployParameter()
+            var results = new List<WebDeployParameter>
             {
-                Name = "FirstParameter",
-                DefaultValue = "FirstValue",
-                Description = "Description of FirstParameter",
-                Entries = new List<WebDeployParameterEntry>()
+                new WebDeployParameter
                 {
-                    new WebDeployParameterEntry()
+                    Name = "FirstParameter",
+                    DefaultValue = "FirstValue",
+                    Description = "Description of FirstParameter",
+                    Entries = new List<WebDeployParameterEntry>
                     {
-                        Kind = "XmlFile",
-                        Match = "/configuration/appSettings/add[@key='FirstAppSetting']/@value",
-                        Scope = @"\\web.config$"
-                    }
-                }
-            });
-            results.Add(new WebDeployParameter()
-            {
-                Name = "SecondParameter",
-                DefaultValue = "SecondValue",
-                Description = "Description of SecondParameter",
-                Entries = new List<WebDeployParameterEntry>()
+                        new WebDeployParameterEntry
+                        {
+                            Kind = "XmlFile",
+                            Match = "/configuration/appSettings/add[@key='FirstAppSetting']/@value",
+                            Scope = @"\\web.config$",
+                        },
+                    },
+                },
+                new WebDeployParameter
                 {
-                    new WebDeployParameterEntry()
+                    Name = "SecondParameter",
+                    DefaultValue = "SecondValue",
+                    Description = "Description of SecondParameter",
+                    Entries = new List<WebDeployParameterEntry>
                     {
-                        Kind = "XmlFile",
-                        Match = "/configuration/appSettings/add[@key='SecondAppSetting']/@value",
-                        Scope = @"\\web.config$"
-                    }
-                }
-            });
+                        new WebDeployParameterEntry
+                        {
+                            Kind = "XmlFile",
+                            Match = "/configuration/appSettings/add[@key='SecondAppSetting']/@value",
+                            Scope = @"\\web.config$",
+                        },
+                    },
+                },
 
-            results.Add(new WebDeployParameter()
-            {
-                Name = "IIS Web Application Name",
-                DefaultValue = defaultProjectName
-            });
+                new WebDeployParameter()
+                {
+                    Name = "IIS Web Application Name",
+                    DefaultValue = defaultProjectName,
+                },
+            };
 
             if (includeAutoConnectionParameters)
             {

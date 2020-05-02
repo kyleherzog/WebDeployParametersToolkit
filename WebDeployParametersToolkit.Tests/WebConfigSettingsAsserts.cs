@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebDeployParametersToolkit.Utilities;
@@ -14,6 +15,16 @@ namespace WebDeployParametersToolkit.Tests
 
         public static void AssertHasSameItems(this IEnumerable<WebConfigSetting> source, IEnumerable<WebConfigSetting> target)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
             if (source.Count() == target.Count())
             {
                 foreach (var sourceItem in source)

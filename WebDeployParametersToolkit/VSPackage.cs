@@ -28,6 +28,7 @@ namespace WebDeployParametersToolkit
     [InstalledProductRegistration("#110", "#112", Vsix.Version, IconResourceID = 400)] // Info on this package for Help/About
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PackageGuids.guidWebDeployParametersToolkitPackageString)]
+    [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [ProvideAutoLoad(UIContextGuids80.SolutionHasSingleProject, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideAutoLoad(UIContextGuids80.SolutionHasMultipleProjects, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideOptionPage(typeof(OptionsPageGrid), "Web Deploy Parameters Toolkit", "General", 0, 0, true)]
@@ -65,8 +66,8 @@ namespace WebDeployParametersToolkit
         {
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-            GenerateSetParametersCommand.Initialize(this);
-            NestCommand.Initialize(this);
+            await GenerateSetParametersCommand.InitializeAsync(this).ConfigureAwait(true);
+            await NestCommand.InitializeAsync(this);
 
             await base.InitializeAsync(cancellationToken, progress).ConfigureAwait(true);
 
@@ -78,9 +79,9 @@ namespace WebDeployParametersToolkit
             OptionsPage = (OptionsPageGrid)GetDialogPage(typeof(OptionsPageGrid));
 
             Nester.Initialize(DteInstance);
-            ApplyMissingParametersCommand.Initialize(this);
-            GenerateParametersCommand.Initialize(this);
-            AddParameterizationTargetCommand.Initialize(this);
+            await ApplyMissingParametersCommand.InitializeAsync(this).ConfigureAwait(true);
+            await GenerateParametersCommand.InitializeAsync(this).ConfigureAwait(true);
+            await AddParameterizationTargetCommand.InitializeAsync(this).ConfigureAwait(true);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace WebDeployParametersToolkit.Tests
             Document = new XmlDocument { XmlResolver = null };
 
             var sreader = new System.IO.StringReader(xml);
-            var reader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
+            using var reader = new XmlTextReader(sreader) { DtdProcessing = DtdProcessing.Prohibit };
             Document.Load(reader);
 
             ExpectedSettings = new List<WebConfigSetting>();

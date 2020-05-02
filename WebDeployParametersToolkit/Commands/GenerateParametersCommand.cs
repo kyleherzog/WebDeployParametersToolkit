@@ -31,23 +31,17 @@ namespace WebDeployParametersToolkit
         /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
-        private readonly Package package;
+        private readonly AsyncPackage package;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GenerateParametersCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        private GenerateParametersCommand(Package package)
+        private GenerateParametersCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
-            if (package == null)
-            {
-                throw new ArgumentNullException(nameof(package));
-            }
+            this.package = package ?? throw new ArgumentNullException(nameof(package));
 
-            this.package = package;
-
-            var commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
@@ -82,15 +76,40 @@ namespace WebDeployParametersToolkit
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        public static void Initialize(Package package)
+        public static async System.Threading.Tasks.Task InitializeAsync(AsyncPackage package)
         {
-            Instance = new GenerateParametersCommand(package);
+            // Switch to the main thread - the call to AddCommand in SampleCommand's constructor requires
+            // the UI thread.
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+
+            var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)).ConfigureAwait(true) as OleMenuCommandService;
+            Instance = new GenerateParametersCommand(package, commandService);
         }
 
-        private bool CanGenerateParameters()
+        private static bool CanGenerateParameters()
         {
             var filename = Path.GetFileName(SolutionExplorerExtensions.SelectedItemPath);
             return filename.Equals("web.config", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static void WriteParameters(IEnumerable<WebConfigSetting> settings, XmlWriter writer)
+        {
+            foreach (var setting in settings)
+            {
+                writer.WriteStartElement("parameter");
+                writer.WriteAttributeString("name", setting.Name);
+                writer.WriteAttributeString("defaultvalue", setting.Value);
+                writer.WriteAttributeString("description", $"{setting.Name} description.");
+                writer.WriteAttributeString("tags", string.Empty);
+
+                writer.WriteStartElement("parameterentry");
+                writer.WriteAttributeString("kind", "XmlFile");
+                writer.WriteAttributeString("match", setting.NodePath);
+                writer.WriteAttributeString("scope", @"\\web.config$");
+                writer.WriteEndElement();
+
+                writer.WriteEndElement();
+            }
         }
 
         private void CreateParametersXml(IEnumerable<WebConfigSetting> settings, string fileName)
@@ -269,26 +288,6 @@ namespace WebDeployParametersToolkit
             parametersNode.AppendChild(missingParametersNodes);
 
             document.Save(fileName);
-        }
-
-        private void WriteParameters(IEnumerable<WebConfigSetting> settings, XmlWriter writer)
-        {
-            foreach (var setting in settings)
-            {
-                writer.WriteStartElement("parameter");
-                writer.WriteAttributeString("name", setting.Name);
-                writer.WriteAttributeString("defaultvalue", setting.Value);
-                writer.WriteAttributeString("description", $"{setting.Name} description.");
-                writer.WriteAttributeString("tags", string.Empty);
-
-                writer.WriteStartElement("parameterentry");
-                writer.WriteAttributeString("kind", "XmlFile");
-                writer.WriteAttributeString("match", setting.NodePath);
-                writer.WriteAttributeString("scope", @"\\web.config$");
-                writer.WriteEndElement();
-
-                writer.WriteEndElement();
-            }
         }
     }
 }
