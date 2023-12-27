@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using WebDeployParametersToolkit.Extensions;
 
 namespace WebDeployParametersToolkit
@@ -31,19 +30,11 @@ namespace WebDeployParametersToolkit
         public static readonly Guid CommandSet = new Guid("b451bf5d-476a-43b7-8a00-11671601fdaa");
 
         /// <summary>
-        /// VS Package that provides this command, not null.
-        /// </summary>
-        private readonly AsyncPackage package;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="NestCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
-        /// <param name="package">Owner package, not null.</param>
-        private NestCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private NestCommand(OleMenuCommandService commandService)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
-
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
@@ -63,17 +54,6 @@ namespace WebDeployParametersToolkit
         }
 
         /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider
-        {
-            get
-            {
-                return package;
-            }
-        }
-
-        /// <summary>
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
@@ -85,7 +65,7 @@ namespace WebDeployParametersToolkit
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)).ConfigureAwait(false) as OleMenuCommandService;
 
-            Instance = new NestCommand(package, commandService);
+            Instance = new NestCommand(commandService);
         }
 
         private static bool CanNestInParameters()
