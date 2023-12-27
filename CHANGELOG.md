@@ -11,6 +11,10 @@ download in the
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
+## 4.0
+**2023-12-27**
+- [x] Visual Studio 2022 support
+
 ## 3.2
 **2020-7-18**
 - [x] Fix for Visual Studio 2017 support

@@ -203,6 +203,7 @@ namespace WebDeployParametersToolkit
             var menuItem = (OleMenuCommand)sender;
             menuItem.Visible = false;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
             SolutionExplorerExtensions.LoadSelectedItemPath();
 
             if (CanGenerateParameters())

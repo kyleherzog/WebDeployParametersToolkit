@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="6435437e-72fb-4626-9a47-865f185ce258" Version="3.2" Language="en-US" Publisher="Kyle Herzog" />
+        <Identity Id="6435437e-72fb-4626-9a47-865f185ce258" Version="4.0" Language="en-US" Publisher="Kyle Herzog" />
         <DisplayName>Web Deploy Parameters Toolkit</DisplayName>
         <Description xml:space="preserve">Tools to make it easy to work with parameters in Web Deploy (MSDeploy).  This includes automatically generating a Parameters.xml file from a web.config file, generating SetParameters.xml file from Parameters.xml</Description>
         <MoreInfo>https://github.com/kyleherzog/WebDeployParametersToolkit</MoreInfo>
