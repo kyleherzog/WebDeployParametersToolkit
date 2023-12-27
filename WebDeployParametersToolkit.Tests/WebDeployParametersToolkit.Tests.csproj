@@ -73,7 +73,6 @@
     <Compile Include="XmlNodeExtensionsTests\GetFullPathShould.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\EmptySettings.config">
       <SubType>Designer</SubType>
