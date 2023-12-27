@@ -16,6 +16,7 @@ namespace WebDeployParametersToolkit.Extensions
         {
             var dte = VSPackage.DteInstance;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
             var paths = dte.ToolWindows.SolutionExplorer.SelectedItemPaths();
 
             if (paths.Count() == 1)

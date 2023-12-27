@@ -203,6 +203,7 @@ namespace WebDeployParametersToolkit
             var menuItem = (OleMenuCommand)sender;
             menuItem.Visible = false;
 
+            ThreadHelper.ThrowIfNotOnUIThread();
             SolutionExplorerExtensions.LoadSelectedItemPath();
 
             if (CanGenerateParameters())
@@ -260,7 +261,7 @@ namespace WebDeployParametersToolkit
                 }
             }
 
-            var missingSettings = settings.Where(s => !matches.Any(p => p == s.NodePath)).ToList();
+            var missingSettings = settings.Where(s => !matches.Exists(p => p == s.NodePath)).ToList();
 
             EnsureUniqueSettingsNames(missingSettings, parameters.Select(p => p.Name).ToList());
 

@@ -78,7 +78,7 @@ namespace WebDeployParametersToolkit
 
             OptionsPage = (OptionsPageGrid)GetDialogPage(typeof(OptionsPageGrid));
 
-            Nester.Initialize(DteInstance);
+            await Nester.Initialize(DteInstance).ConfigureAwait(true);
             await ApplyMissingParametersCommand.InitializeAsync(this).ConfigureAwait(true);
             await GenerateParametersCommand.InitializeAsync(this).ConfigureAwait(true);
             await AddParameterizationTargetCommand.InitializeAsync(this).ConfigureAwait(true);

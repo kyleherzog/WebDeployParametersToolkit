@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 
 namespace WebDeployParametersToolkit
 {
@@ -10,10 +12,12 @@ namespace WebDeployParametersToolkit
     {
         private static ProjectItemsEvents events;
 
-        public static void Initialize(DTE2 dte)
+        public static async Task Initialize(DTE2 dte)
         {
             if (events == null)
             {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
                 events = ((Events2)dte.Events).ProjectItemsEvents;
                 events.ItemAdded += ItemAdded;
                 events.ItemRenamed += ItemRenamed;
