@@ -166,7 +166,7 @@ namespace WebDeployParametersToolkit
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             var dialog = new FileNameDialog();
-            var hwnd = new IntPtr(VSPackage.DteInstance.MainWindow.HWnd);
+            var hwnd = VSPackage.DteInstance.MainWindow.HWnd;
             var window = (System.Windows.Window)HwndSource.FromHwnd(hwnd).RootVisual;
             dialog.Owner = window;
 
